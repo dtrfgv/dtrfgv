@@ -3,6 +3,137 @@
 ########################           avec sampvar_type=2             ########################
 ############################################################################################
 
+### A utiliser quand sampvar=TRUE and sampvar_type="2 ==> permet de construire un arbre cartgv tel que dans chaque arbre de 
+# coupure un sous-ensemble de variables est tiré au hasard avant chaque coupure
+#' Title
+#'
+#' @param data 
+#' @param group 
+#' @param crit 
+#' @param case_min 
+#' @param maxdepth 
+#' @param p 
+#' @param penalty 
+#' @param mtry_var 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+cartgv.rf<-function(data,group,crit=1,case_min=1,maxdepth=2,p=floor(sqrt(length(unique(group[!is.na(group)])))),
+                    penalty="No",
+                    mtry_var=sapply(as.numeric(table(group[!is.na(group)])),function(x)floor(sqrt(x)))){
+  ##Initialisation
+  tree<-NULL
+  parent<-c()#Noeud ancetre du noeud
+  depth<-c()#Profondeur du noeuds
+  var<-c()#Groupe selectionné pour couper
+  carts<-list()#CART définissant la coupure
+  n<-c()# Effectif dans le noeud considéré
+  n_case<-c()# Effectif de Y=1 dans le noeud considéré
+  n_noncase<-c()# Effectif de Y=0 dans le noeud considéré
+  yval<-c()#Prédiction de CART = règle de prediction basée sur la classe majoritaire dans la feuille
+  prob<-c()#Proportion de Y=1 dans la feuille
+  pop<-list()#Indices des individus dans le noeuds
+  tree_split<-list()#Information sur toutes les divisions possibles du noeud
+  tables_coupures<-list()#un data.frame pour chaque coupure qui permet de detailler comment l'arbre de coupure est fait
+  improvment<-c()#Gain d'impureté dû à la coupure
+  action<-c()# 1: si on coupe; -1: quand au moins un critère d'arret rempli; -2: pas d'amelioration de l'impurete qqsoit le groupe ; -3
+  parent[1]<-NA
+  depth[1]<-0
+  groups_selec<-NULL
+  n[1]<-dim(data)[1]
+  pop[[1]]<-rownames(data)
+  i<-1 #indice pour le parcours des feuilles
+  i_node_coupure<-NA#indice du noeud dans l'arbre cart de coupure
+  i_node_coupure_2<-NA#indice du noeud dans l'arbre cart de coupure
+  yval[1] <- ifelse((length(which(data$Y == "1")) / n[1]) < 0.5, "0", "1")
+  while(i<=length(n)){
+    node<-data[intersect(unlist(pop[[i]]),rownames(data)),]
+    prob[i]<-round((length(which(node$Y=="1"))/n[i]),4)
+    n_case[i]<-length(which(node$Y=="1"))
+    n_noncase[i]<-length(which(node$Y=="0"))
+    if(crit=="1"){
+      node_impurity<-gini(prop.table(table(node$Y)))
+    }else{
+      if(crit=="2"){
+        node_impurity<-entropy(prop.table(table(node$Y)))
+      }else{
+        if(crit=="3"){
+          node_impurity<-(length(which(label!=node$Y)))- length(which(pred[,j]!=node$Y))
+        }
+      }
+    }
+    if ((n_case[i] > case_min) & (n_noncase[i] > case_min)) {### Critères d'arrêt (Nbr min d'observations ou feuille "pure")
+      igroups<-group.selection(group[-1],mtry=p)
+      groups_selec<-rbind(groups_selec,igroups)
+      tree_splits<-list()
+      improvment_splits<-rep(NA,length(igroups))
+      for(l in 1:length(igroups)){
+        tree_splits[[l]]<-cartgv_split(data=node[,c(1,which(group==igroups[l]))],group=c(NA,1:length(which(group==igroups[l]))),
+                                       crit=crit,case_min=1,maxdepth=maxdepth,p=min(mtry_var[igroups[l]], length(which(group==igroups[l]))),penalty="No")
+        improvment_splits[l]<-length(node$Y)*(node_impurity-impurity.cartgv(node[,c(1,which(group==igroups[l]))], list(tree_splits[[l]]$tree),tree_splits[[l]])$impurete[,crit])                       
+        group.size<-length(which(group==igroups[l]))
+        if(penalty=="Size"){
+          improvment_splits[l]<-improvment_splits[l]/group.size
+        }
+        if(penalty=="Root.size"){
+          improvment_splits[l]<-improvment_splits[l]/sqrt(group.size)
+        }
+        if(penalty=="Log"){
+          if(group.size>1){
+            improvment_splits[l]<-improvment_splits[l]/log(group.size)
+          }
+        }
+      }
+      improvment[i]<-max(improvment_splits)
+      if (improvment[i] > 0){#y-a-t-il un groupe de variable qui ameliore l'impurete du noeud?
+        action[i] <- 1
+        max.importance<-max(improvment_splits)
+        if(length(which(improvment_splits==max.importance))>1){
+          ind_var<-sample(which(improvment_splits==max.importance),1,FALSE)
+        }else{
+          ind_var<-which.max(improvment_splits)
+        }
+        var[i] <- igroups[ind_var]#si oui, on choisit celui qui maximise la decroissance d'impurete
+        tree_split[[i]]<-tree_splits[[ind_var]]
+        leaves<-which(tree_split[[i]]$tree$leave=="*")
+        for(k in 1:length(leaves)){
+          i_node_coupure_2<-c(i_node_coupure_2,as.numeric(as.character(tree_split[[i]]$tree$node[leaves[k]])))
+          i_node_coupure<-c(i_node_coupure,as.numeric(as.character(tree_split[[i]]$tree$i_node_coupure[leaves[k]])))
+          parent<-c(parent,i)
+          depth<-c(depth,depth[i]+1)
+          yval<-c(yval,as.numeric(as.character(tree_split[[i]]$tree$yval[leaves[k]])))
+          pop[[length(pop)+1]]<-tree_split[[i]]$pop[[leaves[k]]]
+          n<-c(n,length(unlist(tree_split[[i]]$pop[[leaves[k]]])))
+        }
+        i<-i+1
+        
+      }else{
+        action[i]<--2 #Aucun groupe de variable n'améliore l'impureté
+        var[i]<-NA
+        i<-i+1
+      }
+    }else{
+      action[i]<--1 #Au moins un critère d'arrêt rempli
+      improvment[i]<-NA
+      var[i]<-NA
+      i<-i+1
+    }
+    pred<-NULL
+    tree_splits<-NULL
+    ind_var<-NULL
+    leaves<-NULL
+  }
+  node<-1:length(depth)
+  leave<-ifelse(action<0,"*","")
+  improvment<-round(improvment,4)
+  tree<-as.data.frame(cbind(action,var,depth,parent,n,n_case,n_noncase,yval,prob,leave,node,improvment,i_node_coupure,i_node_coupure_2))
+  rownames(groups_selec)<-paste("split",1:nrow(groups_selec),seq=" ")
+  colnames(groups_selec)<-paste(1:ncol(groups_selec),"th group selected",seq=" ")
+  
+  return(list(tree=tree,tree_split=tree_split,pop=pop,groups_selec=groups_selec))
+}
 
 
 # =========================================================================================

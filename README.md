@@ -1,47 +1,53 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# algotlda
+# tplda
 
-The goal of algotlda is to …
+Attempt to create an R package from prototype available at
+[“Classification tree algorithm for grouped
+variables”](https://github.com/apoterie/TPLDA).
 
 ## Installation
 
-You can install the released version of algotlda from
-[CRAN](https://CRAN.R-project.org) with:
-
-``` r
-install.packages("algotlda")
-```
+Don’t try to install this package :sweat\_smile:
 
 ## Example
 
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-## basic example code
+library(tplda)
+
+data(data_pour_tester_fonctions)
+
+train<-data[which(data[,1]=="train"),-1]           # negative index into the `data` 
+test<-data[which(data[,1]=="test"),-1]             # object specifying all rows and all columns 
+validation<-data[which(data[,1]=="validation"),-1] # except the first column.
+
+forest<-rfgv(train,
+             group=group,
+             groupImp=group,
+             ntree=1,
+             mtry_group=3,
+             sampvar=TRUE,
+             sampvar_type=2,
+             maxdepth=2,
+             kfold=3,
+             replace=T,
+             case_min=1,
+             sampsize=nrow(train),
+             mtry_var=rep(2,5),
+             grp.importance=TRUE,
+             test=test,
+             keep_forest=F,
+             crit=1,
+             penalty="No")
+
+print(forest$importance)
+#>    MeanDecrAcc MeanDecrAccNor
+#> 1 -0.008474576   -0.001694915
+#> 2  0.084745763    0.016949153
+#> 3 -0.042372881   -0.008474576
+#> 4 -0.016949153   -0.003389831
+#> 5  0.042372881    0.008474576
 ```
-
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
-
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub\!
