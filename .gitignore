@@ -1,0 +1,10 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.swp
+tests/notebooks/.ipynb_checkpoints
+packrat/lib*/
+packrat/
+firstprof.Rprofvis
+*.Rd

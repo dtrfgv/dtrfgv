@@ -1,0 +1,15 @@
+Package: tplda
+Description: Classification tree algorithm for grouped variables
+Type: Package
+Title: Tree Penalized Linear Discriminant Analysis
+Version: 0.00
+Date: 2017-03-02
+Author: Audrey Poterie
+Depends: R (>= 3.0.0)
+License: GPL (>= 2)
+Maintainer: Pierre Navaro <navaro@math.cnrs.fr>
+Imports: 
+  caret, gtools,rpart,e1071,fields,MASS,UBL,ElemStatLearn,
+  rpart.plot,randomForest,pryr,compiler, ROCR
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.1.0
