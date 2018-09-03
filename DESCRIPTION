@@ -12,7 +12,9 @@ Author: Audrey Poterie
 Depends: R (>= 3.0.0)
 License: GPL (>= 2)
 Maintainer: Pierre Navaro <navaro@math.cnrs.fr>
-Imports: 
+Imports:
   caret, ROCR, gtools, rpart, stats, e1071
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0
+Suggests: testthat,
+    covr

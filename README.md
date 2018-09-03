@@ -1,7 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# tplda
+# Tree Penalized Linear Discriminant Analysis
+
+[![Build
+Status](https://travis-ci.org/pnavaro/tplda.svg?branch=master)](https://travis-ci.org/pnavaro/tplda)
+[![Coverage
+status](https://codecov.io/gh/pnavaro/tplda/branch/master/graph/badge.svg)](https://codecov.io/github/pnavaro/tplda?branch=master)
 
 Attempt to create an R package from prototype available at
 [“Classification tree algorithm for grouped
@@ -45,9 +50,9 @@ forest<-rfgv(train,
 
 print(forest$importance)
 #>    MeanDecrAcc MeanDecrAccNor
-#> 1 -0.008474576   -0.001694915
-#> 2  0.084745763    0.016949153
-#> 3 -0.042372881   -0.008474576
-#> 4 -0.016949153   -0.003389831
-#> 5  0.042372881    0.008474576
+#> 1 -0.007518797   -0.001503759
+#> 2  0.105263158    0.021052632
+#> 3  0.000000000    0.000000000
+#> 4 -0.075187970   -0.015037594
+#> 5  0.000000000    0.000000000
 ```

@@ -5,3 +5,4 @@
 ^\.Rprofile$
 .travis.yml
 tests/notebooks/.ipynb_checkpoints
+^codecov\.yml$

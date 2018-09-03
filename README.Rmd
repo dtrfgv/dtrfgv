@@ -12,9 +12,10 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# tplda
+# Tree Penalized Linear Discriminant Analysis
 
 [![Build Status](https://travis-ci.org/pnavaro/tplda.svg?branch=master)](https://travis-ci.org/pnavaro/tplda)
+[![Coverage status](https://codecov.io/gh/pnavaro/tplda/branch/master/graph/badge.svg)](https://codecov.io/github/pnavaro/tplda?branch=master)
 
 Attempt to create an R package from prototype available at ["Classification tree algorithm for grouped variables"](https://github.com/apoterie/TPLDA).
 

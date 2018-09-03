@@ -143,6 +143,29 @@ group.selection<-function(group,mtry=sqrt(unique(group[!is.na(group)]))){
 #' @export
 #'
 #' @examples
+#' data(data_pour_tester_fonctions)
+#' train<-data[which(data[,1]=="train"),-1]           # negative index into the `data` 
+#' test<-data[which(data[,1]=="test"),-1]             # object specifying all rows and all columns 
+#' validation<-data[which(data[,1]=="validation"),-1] # except the first column.
+#' 
+#' forest<-rfgv(train,
+#'              group=group,
+#'              groupImp=group,
+#'              ntree=1,
+#'              mtry_group=3,
+#'              sampvar=TRUE,
+#'              sampvar_type=2,
+#'              maxdepth=2,
+#'              kfold=3,
+#'              replace=T,
+#'              case_min=1,
+#'              sampsize=nrow(train),
+#'              mtry_var=rep(2,5),
+#'              grp.importance=TRUE,
+#'              test=test,
+#'              keep_forest=F,
+#'              crit=1,
+#'              penalty="No")
 rfgv<-function(data,group,groupImp,ntree=200,mtry_group=floor(sqrt(length(unique(group[!is.na(group)])))),
              maxdepth=1,kfold=3,replace=T,sampsize=ifelse(replace==T,nrow(data),floor(0.632*nrow(data))),
              case_min=1,grp.importance=TRUE,test=NULL,keep_forest=F,crit=1,penalty="No",

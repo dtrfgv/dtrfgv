@@ -5,3 +5,13 @@ addons:
   apt:
     packages:
     - libnlopt-dev
+
+r_packages:
+  - covr
+  - devtools
+
+r_github_packages:
+  - pnavaro/tplda
+
+after_success:
+  - Rscript -e 'covr::codecov()'
