@@ -1,10 +1,8 @@
-library(caret)
-library(e1071)
-library(ROCR)
 
 
-##Trouver le seuil qui permet le meilleur compromis sensibilité-specificite
+
 #' Title
+#' Trouver le seuil qui permet le meilleur compromis sensibilite-specificite
 #'
 #' @param perf 
 #'
@@ -31,14 +29,14 @@ opt.cut = function(perf) {
 }
 
 
-#' Title Performance
+#' Title
 #'
 #' @param score 
 #' @param test 
 #'
 #' @return
 #' @export
-#' @importFrom ROCR performance prediction
+#' @importFrom ROCR performance
 #' @examples
 performances <- function(score, test) {
   pred <- prediction(score, as.factor(test[, 1]))
@@ -77,12 +75,21 @@ performances <- function(score, test) {
 }
 
 
-#' Title Confusion matrix and predictive performance 
-#' manage the predicted model when all is one or zero
+
+#' Title 
+#' Matrice de confusion + performances predictives 
+#' (gere quand le modele predit tout en 1 ou 0)
+#'
 #' @param predY 
 #' @param Y 
-#' @export
+#'
+#' @return
+#' 
 #' @importFrom caret confusionMatrix
+#' 
+#' @export
+#'
+#' @examples
 xtab_function<-function(predY,Y){
   if (length(unique(predY)) == 1) {
     if (unique(predY) == "0") {
@@ -100,7 +107,7 @@ xtab_function<-function(predY,Y){
       xtab <- confusionMatrix(tab, positive = "1")
     }
   } else{
-    xtab <- caret::confusionMatrix(table(as.factor(predY), as.factor(Y)), positive = "1")
+    xtab <- confusionMatrix(table(as.factor(predY), as.factor(Y)), positive = "1")
   }
   xtab
 }

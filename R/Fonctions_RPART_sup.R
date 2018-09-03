@@ -1,7 +1,5 @@
 ######## Manipulation des arbres CART (package rpart)
 
-library(rpart)
-
 ##################################################################################################################################################################
 # Reconstruction  des arbres CART
 ##################################################################################################################################################################
@@ -19,6 +17,7 @@ library(rpart)
 #'
 #' @return
 #' @export
+#' @import rpart
 #'
 #' @examples
 calcul_cart <- function(cart,data) {
@@ -104,6 +103,15 @@ calcul_cart <- function(cart,data) {
 ### Paramètres d'entrée:
 # new_obs : une nouvelle observation (avec les mêmes variables que celle de l'echantillonn d'apprentissage)
 # tableau : sortie de la fonction calcul_cart()
+#' Title
+#'
+#' @param new_obs 
+#' @param tableau 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 pred_cart<-function(new_obs,tableau){
   i_node<-1
   while(as.character(tableau$var[i_node])!="<leaf>"){
@@ -140,6 +148,25 @@ pred_cart<-function(new_obs,tableau){
 #Pour chaque arbre, on prédit la classe de chaque observation de l'ensemble test;
 #puis à partir de ces résultats, on calcul l'impureté de chaque arbre (gini, l'entropie et le taux de mal-classés sont calculés)
 
+#' Title
+#'
+#' @param validation 
+#' @param tree_seq 
+#'
+#' @return
+#' la fonction renvoie une liste donnant : 
+#'  impurete : une matrice contenant les differentes valeurs d'impuret'e pour chaque sous-arbres
+#'  pred = liste des predictions pour chaque sous arbres
+#'  summary_noeuds : liste contenant pour chaque sous-arbre des infos sur ses noeuds: 
+#'                    nom_noeuds = noms du noeuds
+#'                    N = nb obs dans le neoud
+#'                    N[Y=1] = nb d'obs dans le noeuds appartenant a' la class "Y=1" 
+#'                    P[Y=1] = proba pour une obs du noeuds d'appartenanir  a' la class "Y=1"
+#'                    P[Y=0] = proba pour une obs du noeuds d'appartenanir  a' la class "Y=0"
+#'                    P[hat.Y!=Y] = tx de mal class'es dans le noeud
+#' @export
+#'
+#' @examples
 impurete_rpart <- function(validation, tree_seq) {
   N_tree <- length(tree_seq)
   N <- dim(validation)[1]
@@ -172,14 +199,3 @@ impurete_rpart <- function(validation, tree_seq) {
   }
   list(impurete = impurete,pred = pred,summary_noeuds = sum_noeuds)
 }
-# Valeurs retourn'ees par la fonction : 
-#==> la fonction renvoie une liste donnant : 
-###   impurete : une matrice contenant les differentes valeurs d'impuret'e pour chaque sous-arbres
-###   pred = liste des predictions pour chaque sous arbres
-###   summary_noeuds : liste contenant pour chaque sous-arbre des infos sur ses noeuds: 
-###                     nom_noeuds = noms du noeuds
-###                     N = nb obs dans le neoud
-###                     N[Y=1] = nb d'obs dans le noeuds appartenant a' la class "Y=1" 
-###                     P[Y=1] = proba pour une obs du noeuds d'appartenanir  a' la class "Y=1"
-###                     P[Y=0] = proba pour une obs du noeuds d'appartenanir  a' la class "Y=0"
-###                     P[hat.Y!=Y] = tx de mal class'es dans le noeud

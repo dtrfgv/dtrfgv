@@ -1,17 +1,6 @@
 rm(list=ls())
 
 library(tplda)
-library(gtools)
-library(rpart)
-library(e1071)
-library(fields)
-library(MASS)
-library(UBL)
-library(ElemStatLearn)
-library(rpart.plot)
-library(randomForest)
-library(pryr)
-require(compiler)
 
 data(data_pour_tester_fonctions)
 

@@ -1,5 +1,9 @@
 Package: tplda
-Description: Classification tree algorithm for grouped variables
+Description: This package implements "The Tree Penalized Linear Discriminant Analysis algorithm (TPLDA)".
+   It is a new-tree based approach which constructs a classification rule based on groups of variables. 
+   It consists in splitting a node by repeatedly selecting a group and then applying a regularized linear 
+   discriminant analysis based on this group. This process is repeated until some stopping criterion is 
+   satisfied. A pruning strategy is proposed to select an optimal tree.
 Type: Package
 Title: Tree Penalized Linear Discriminant Analysis
 Version: 0.00
@@ -9,7 +13,6 @@ Depends: R (>= 3.0.0)
 License: GPL (>= 2)
 Maintainer: Pierre Navaro <navaro@math.cnrs.fr>
 Imports: 
-  caret, gtools,rpart,e1071,fields,MASS,UBL,ElemStatLearn,
-  rpart.plot,randomForest,pryr,compiler, ROCR
+  caret, ROCR, gtools, rpart, stats
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0

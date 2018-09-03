@@ -3,6 +3,7 @@
 ########################           avec sampvar_type=2             ########################
 ############################################################################################
 
+
 ### A utiliser quand sampvar=TRUE and sampvar_type="2 ==> permet de construire un arbre cartgv tel que dans chaque arbre de 
 # coupure un sous-ensemble de variables est tiré au hasard avant chaque coupure
 #' Title
@@ -71,7 +72,7 @@ cartgv.rf<-function(data,group,crit=1,case_min=1,maxdepth=2,p=floor(sqrt(length(
       improvment_splits<-rep(NA,length(igroups))
       for(l in 1:length(igroups)){
         tree_splits[[l]]<-cartgv_split(data=node[,c(1,which(group==igroups[l]))],group=c(NA,1:length(which(group==igroups[l]))),
-                                       crit=crit,case_min=1,maxdepth=maxdepth,p=min(mtry_var[igroups[l]], length(which(group==igroups[l]))),penalty="No")
+                                      crit=crit,case_min=1,maxdepth=maxdepth,p=min(mtry_var[igroups[l]], length(which(group==igroups[l]))),penalty="No")
         improvment_splits[l]<-length(node$Y)*(node_impurity-impurity.cartgv(node[,c(1,which(group==igroups[l]))], list(tree_splits[[l]]$tree),tree_splits[[l]])$impurete[,crit])                       
         group.size<-length(which(group==igroups[l]))
         if(penalty=="Size"){
@@ -131,7 +132,7 @@ cartgv.rf<-function(data,group,crit=1,case_min=1,maxdepth=2,p=floor(sqrt(length(
   tree<-as.data.frame(cbind(action,var,depth,parent,n,n_case,n_noncase,yval,prob,leave,node,improvment,i_node_coupure,i_node_coupure_2))
   rownames(groups_selec)<-paste("split",1:nrow(groups_selec),seq=" ")
   colnames(groups_selec)<-paste(1:ncol(groups_selec),"th group selected",seq=" ")
-  
+
   return(list(tree=tree,tree_split=tree_split,pop=pop,groups_selec=groups_selec))
 }
 
@@ -142,9 +143,7 @@ cartgv.rf<-function(data,group,crit=1,case_min=1,maxdepth=2,p=floor(sqrt(length(
 
 
 ### la fonction fait appel à la fonction predict.cartgv()
-### IMPORTANT : i_noeuds (indice du noeud dans l'arbre de coupure, cad indice donne par rpart)
-# et noeuds (indice du noeud dans l'arbre cartgv) utilisées comme cles primaires pour 
-# identifier de manière unique un noeuds
+### IMPORTANT : i_noeuds (indice du noeud dans l'arbre de coupure, càd indice donné par rpart) et noeuds (indice du noeud dans l'arbre cartgv) utilisées comme clés primaires pour identifier de manière unique un noeuds
 #' Title
 #'
 #' @param new 
@@ -201,7 +200,7 @@ predict.cartgv.rf<-function(new,tree,tree_split){
 #'
 #' @return
 #' @export
-#' @import rpart
+#'
 #' @examples
 impurity.cartgv.rf <- function(validation, tree_seq,tree) {
   N_tree <- length(tree_seq)
@@ -238,22 +237,9 @@ impurity.cartgv.rf <- function(validation, tree_seq,tree) {
 
 
 
-#' Title
-#'
-#' @param num_group 
-#' @param data 
-#' @param oobsamples 
-#' @param group 
-#' @param tree 
-#' @param impurityacc 
-#'
-#' @return
-#' @export
-#' @examples
 grpimpperm.rf<-function(num_group,data,oobsamples,group,tree,impurityacc){
   data_perm<-perm(oobsamples,data,num_group,group)
-  accperm<-1-impurity.cartgv.rf(data_perm,list(tree$tree),tree)$impurete$Misclass
-  # accurancy=1-misclass
+  accperm<-1-impurity.cartgv.rf(data_perm,list(tree$tree),tree)$impurete$Misclass# accurancy=1-misclass
   DecreaseAcc<-impurityacc-accperm
   return(DecreaseAcc)
 }
@@ -282,13 +268,7 @@ grpimpperm.rf<-function(num_group,data,oobsamples,group,tree,impurityacc){
 #' @export
 #'
 #' @examples
-cartgv_split<-function(data,
-                       group,
-                       crit=1,
-                       case_min=1,
-                       maxdepth=2,
-                       p=floor(sqrt(length(unique(group[!is.na(group)])))),
-                       penalty="No"){
+cartgv_split<-function(data,group,crit=1,case_min=1,maxdepth=2,p=floor(sqrt(length(unique(group[!is.na(group)])))),penalty="No"){
   
   ##Initialisation
   tree<-NULL
