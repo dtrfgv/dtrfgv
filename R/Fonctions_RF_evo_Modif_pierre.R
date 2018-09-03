@@ -55,18 +55,17 @@ bsamples<-function(ntree,data,sampsize,replace){
 }
 
 
-# =========================================================================================
-# group.selection() 
-# Function which takes inputs the vector "group" which indicates the group that contain each 
-# variable and a number "mtry" (m<=length(group)).
-# The function selects randomly mtry groups among the length(group) groups and returns a 
-# vector with the indices of the mtry selected group. 
-# note that the default value for m is sqrt(length(group))
-# =========================================================================================
+
 
 #' Title
+#' group.selection() 
+#' Function which takes inputs the vector "group" which indicates the group that contain each 
+#' variable and a number "mtry" (m<=length(group)).
+#' The function selects randomly mtry groups among the length(group) groups and returns a 
+#' vector with the indices of the mtry selected group. 
+#' note that the default value for m is sqrt(length(group))
 #'
-#' @param group 
+#' @param group group that contain each variable
 #' @param mtry 
 #'
 #' @return
