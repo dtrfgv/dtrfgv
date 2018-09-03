@@ -14,6 +14,8 @@ knitr::opts_chunk$set(
 ```
 # tplda
 
+[![Build Status](https://travis-ci.org/pnavaro/tplda.svg?branch=master)](https://travis-ci.org/pnavaro/tplda)
+
 Attempt to create an R package from prototype available at ["Classification tree algorithm for grouped variables"](https://github.com/apoterie/TPLDA).
 
 ## Installation
