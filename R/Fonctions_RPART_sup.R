@@ -140,15 +140,13 @@ pred_cart<-function(new_obs,tableau){
 
 
 
-##################################################################################################################################################################
-# Elagage :  calcul de l'impuret'e a' partir d'un 'echantillon independant et d'une s'equence d'arbres emboites
-##################################################################################################################################################################
-
-#La fonction prend en entrée un échantillon test et une séquence d'arbres emboités
-#Pour chaque arbre, on prédit la classe de chaque observation de l'ensemble test;
-#puis à partir de ces résultats, on calcul l'impureté de chaque arbre (gini, l'entropie et le taux de mal-classés sont calculés)
 
 #' Title
+#' Elagage :  calcul de l'impurete a partir d'un echantillon independant et d'une sequence d'arbres emboites
+#' La fonction prend en entree un échantillon test et une sequence d'arbres emboites
+#' Pour chaque arbre, on predit la classe de chaque observation de l'ensemble test;
+#' puis a partir de ces resultats, on calcul l'impurete de chaque arbre (gini, l'entropie et 
+#' le taux de mal-classes sont calcules)
 #'
 #' @param validation 
 #' @param tree_seq 
@@ -174,22 +172,31 @@ impurete_rpart <- function(validation, tree_seq) {
   sum_noeuds <- list()
   impurete <- matrix(rep(NA, N_tree * 3), nrow = N_tree, ncol = 3)
   for (k in 1:N_tree) {
-    p <- predict(tree_seq[[k]], type = "matrix", validation)
-    noeuds <-apply(p, 1, function(x)rownames(tree_seq[[k]]$frame[which((tree_seq[[k]]$frame$yval2[, 6] == x[6]) &(tree_seq[[k]]$frame$yval2[, 2] == x[2]) &(tree_seq[[k]]$frame$yval2[, 3] == x[3]) &
-                                                                         (tree_seq[[k]]$frame$yval2[, 4] == x[4]) & (tree_seq[[k]]$frame$yval2[, 5] == x[5]) & (tree_seq[[k]]$frame$yval==x[1]))[1], ]))
+    p <- stats::predict(tree_seq[[k]], type = "matrix", validation)
+    noeuds <-apply(p, 1, 
+                   function(x)rownames(tree_seq[[k]]$frame[which( (tree_seq[[k]]$frame$yval2[, 6] == x[6]) 
+                                                                 &(tree_seq[[k]]$frame$yval2[, 2] == x[2]) 
+                                                                 &(tree_seq[[k]]$frame$yval2[, 3] == x[3]) 
+                                                                 &(tree_seq[[k]]$frame$yval2[, 4] == x[4]) 
+                                                                 &(tree_seq[[k]]$frame$yval2[, 5] == x[5]) 
+                                                                 &(tree_seq[[k]]$frame$yval==x[1]))[1], ]))
     predictions <-as.data.frame(cbind(p[, 1] - 1, as.numeric(as.character(validation$Y)), noeuds))
     names(predictions) <- c("hat.Y", "Y", "noeuds")
     n <- as.numeric(table(as.numeric(as.character(predictions$noeuds))))
     n1 <- tapply(as.numeric(as.character(predictions$Y)), as.numeric(as.character(predictions$noeuds)),sum)
     p1 <- n1 / n
     p0 <- 1 - p1
-    predictions$error.pred <-as.numeric(as.character(apply(predictions[, c("hat.Y", "Y")], 1, function(x)ifelse(x[1] != x[2], "1", "0"))))
-    misclass <-tapply(as.numeric(as.character(predictions$error.pred)), as.numeric(as.character(predictions$noeuds)), sum)
-    summaryNoeuds <-as.data.frame(cbind(as.numeric(as.character(names(table(as.numeric(as.character(predictions$noeuds)))))), n, n1, p1, p0, misclass))
+    predictions$error.pred <-as.numeric(as.character(apply(predictions[, c("hat.Y", "Y")], 
+                                                           1, 
+                                                           function(x)ifelse(x[1] != x[2], "1", "0"))))
+    misclass <-tapply(as.numeric(as.character(predictions$error.pred)), 
+                      as.numeric(as.character(predictions$noeuds)), sum)
+    summaryNoeuds <-as.data.frame(cbind(as.numeric(as.character(names(table(as.numeric(as.character(predictions$noeuds)))))), 
+                                        n, n1, p1, p0, misclass))
     names(summaryNoeuds) <-c("nom_noeuds","N","N[Y=1]","P[Y=1]","P[Y=0]","P[hat.Y!=Y]")
     impurete[k, 1] <- sum(apply(summaryNoeuds, 1, function(x)x[2] * gini(x[c(4, 5)]))) / N
-    impurete[k, 2] <-sum(apply(summaryNoeuds, 1, function(x)x[2] * entropy(x[c(4, 5)]))) / N
-    impurete[k, 3] <-sum(summaryNoeuds[, 6]) / (N)
+    impurete[k, 2] <- sum(apply(summaryNoeuds, 1, function(x)x[2] * entropy(x[c(4, 5)]))) / N
+    impurete[k, 3] <- sum(summaryNoeuds[, 6]) / (N)
     impurete<-as.data.frame(impurete)
     names(impurete)<-c("Gini","Information","Misclass")
     pred[[k]]<-predictions

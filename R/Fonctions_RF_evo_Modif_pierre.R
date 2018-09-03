@@ -29,21 +29,19 @@ entropy <- function(p) {
 gini <- function(p) {
   sum(p * (1 - p))
 }
-# =========================================================================================
-# bsamples()
-# Function which takes as inputs two integers "B" and "sampsize", a sample of data "data" 
-# and a boolean "replace".   
-# The function draws randomly B bootstrap samples of size "sampsize" (the size of the sample of data) 
-# and retunrs a matrix which with sampsize lines and B columns which contains the indices of 
-# the observationsbelonging each boostrap sample. 
-# =========================================================================================
 
 #' Title
 #'
+#' Function which takes as inputs two integers "B" and "sampsize", a sample of data "data" 
+#' and a boolean "replace".   
+#' The function draws randomly B bootstrap samples of size "sampsize" (the size of the sample of data) 
+#' and returns a matrix which with sampsize lines and B columns which contains the indices of 
+#' the observationsbelonging each boostrap sample. 
+#'
 #' @param ntree 
-#' @param data 
-#' @param sampsize 
-#' @param replace 
+#' @param data data sample
+#' @param sampsize integer
+#' @param replace boolean
 #'
 #' @return
 #' @export

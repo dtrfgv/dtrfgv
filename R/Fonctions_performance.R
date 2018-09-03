@@ -39,7 +39,7 @@ opt.cut = function(perf) {
 #' @importFrom ROCR performance
 #' @examples
 performances <- function(score, test) {
-  pred <- prediction(score, as.factor(test[, 1]))
+  pred <- ROCR::prediction(score, as.factor(test[, 1]))
   ## ROC curve
   roc <- performance(pred, measure = "tpr", x.measure = "fpr")
   ## Best cut-off

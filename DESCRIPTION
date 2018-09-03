@@ -13,6 +13,6 @@ Depends: R (>= 3.0.0)
 License: GPL (>= 2)
 Maintainer: Pierre Navaro <navaro@math.cnrs.fr>
 Imports: 
-  caret, ROCR, gtools, rpart, stats
+  caret, ROCR, gtools, rpart, stats, e1071
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0

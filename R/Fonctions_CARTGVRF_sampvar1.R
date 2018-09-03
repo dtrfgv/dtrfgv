@@ -31,10 +31,18 @@
 #' @export
 #'
 #' @examples
-cartgv<-function(data,group,crit=1,case_min=1,maxdepth=2,RF=FALSE,penalty="No",
+cartgv<-function(data,
+                 group,
+                 crit=1,
+                 case_min=1,
+                 maxdepth=2,
+                 RF=FALSE,
+                 penalty="No",
                  p=ifelse(!is.null(mtry_group),mtry_group,sqrt(length(unique(group[!is.na(group)])))), 
-                 IMPORTANCE=ifelse(RF==TRUE,FALSE,TRUE),sampvar=ifelse(RF==TRUE,TRUE,FALSE),
-                 mtry_var=sapply(as.numeric(table(group[!is.na(group)])),function(x)floor(sqrt(x)))){
+                 IMPORTANCE=ifelse(RF==TRUE,FALSE,TRUE),
+                 sampvar=ifelse(RF==TRUE,TRUE,FALSE),
+                 mtry_var=sapply(as.numeric(table(group[!is.na(group)])),function(x)floor(sqrt(x))))
+  {
   
   ##Initialisation
   tree<-NULL
@@ -92,7 +100,8 @@ cartgv<-function(data,group,crit=1,case_min=1,maxdepth=2,RF=FALSE,penalty="No",
         if(IMPORTANCE==TRUE){
           importance[[i]]<-unlist(splits[[i]][[crit]])
           agreement[[i]]<-sapply(1:length(igroups),
-                                  function(x)classAgreement(table(unlist(splits[[i]]$carts[[x]]$where),unlist(splits[[i]]$carts[[ind_var]]$where)),match.names=FALSE)$rand)
+                                  function(x) e1071::classAgreement(table(unlist(splits[[i]]$carts[[x]]$where),
+                                                                         unlist(splits[[i]]$carts[[ind_var]]$where)),match.names=FALSE)$rand)
           cimportance[[i]]<-unlist(importance[[i]])*unlist(agreement[[i]])
         }
         var[i] <- igroups[ind_var]#si oui, on choisit celui qui maximise la decroissance d'impurete
@@ -175,14 +184,24 @@ split.cartgv<-function(node,group,igroups,label,maxdepth=2,penalty="No",sampvar=
   var_selec<-rep(0,length(group[!is.na(group)]))
   for(j in 1:nb_group){
     if(sampvar=="TRUE"){
-      ivar<-sample(which(group==igroups[j]),size=min(mtry_var[igroups[j]], length(which(group==igroups[j]))),replace=FALSE)
+      ivar<-sample(which(group==igroups[j]),
+                   size=min(mtry_var[igroups[j]], 
+                            length(which(group==igroups[j]))),replace=FALSE)
       var_selec[ivar]<-1
     }else{
       ivar<-which(group==igroups[j])
     }
-    formula<-as.formula(paste("Y ~ ",paste(names(node)[ivar],collapse="+")))
-    cart <- rpart(formula,node,control=rpart.control(minsplit=1,cp=-0.999,maxdepth = maxdepth,maxsurrogate =0,maxcompete = 0 ),method = "class",parms = list(split = "gini"))
-    pred[,j]<-as.numeric(as.character(predict(cart, type = "class", newdata=node)))
+    formula<-stats::as.formula(paste("Y ~ ",paste(names(node)[ivar],collapse="+")))
+    cart <- rpart(formula,
+                  node,
+                  control=rpart.control(minsplit=1,
+                                        cp=-0.999,
+                                        maxdepth = maxdepth,
+                                        maxsurrogate =0,
+                                        maxcompete = 0 ),
+                  method = "class",
+                  parms = list(split = "gini"))
+    pred[,j]<-as.numeric(as.character(stats::predict(cart, type = "class", newdata=node)))
     carts[[j]] <- cart
     cart<-NULL
   }
@@ -195,7 +214,8 @@ split.cartgv<-function(node,group,igroups,label,maxdepth=2,penalty="No",sampvar=
     Gain_Clas[j]<-length(node$Y)*((length(which(label!=node$Y)))- length(which(pred[,j]!=node$Y)))
     for(k in 1:length(modalities)){
       node1<-node[which(unlist(carts[[j]]$where)==modalities[k]),]
-      tab1<-table(pred[which(unlist(carts[[j]]$where)==modalities[k]),j],node$Y[which(unlist(carts[[j]]$where)==modalities[k])])
+      tab1<-table(pred[which(unlist(carts[[j]]$where)==modalities[k]),j],
+                  node$Y[which(unlist(carts[[j]]$where)==modalities[k])])
       prop_n1<-dim(node1)[1]/length(node$Y)
       Gain_Gini[j]<-Gain_Gini[j]- length(node$Y)*(prop_n1*gini(prop.table(tab1[1,]))) 
       Gain_Ent[j]<-Gain_Ent[j] - length(node$Y)*(prop_n1*entropy(prop.table(tab1[1,])))
@@ -222,7 +242,13 @@ split.cartgv<-function(node,group,igroups,label,maxdepth=2,penalty="No",sampvar=
 
     }
   }
-  return(list(Gain_Gini=Gain_Gini, Gain_Ent=Gain_Ent, Gain_Clas=Gain_Clas, carts=carts, pred=pred,igroups=igroups,var_selec=var_selec))
+  return(list(Gain_Gini=Gain_Gini, 
+              Gain_Ent=Gain_Ent, 
+              Gain_Clas=Gain_Clas, 
+              carts=carts, 
+              pred=pred,
+              igroups=igroups,
+              var_selec=var_selec))
 }
 
 # =========================================================================================
@@ -231,16 +257,11 @@ split.cartgv<-function(node,group,igroups,label,maxdepth=2,penalty="No",sampvar=
 
 perm<-function(oobsamples,data,num_group,group){
   data_perm<-data[oobsamples,]
-  iperm<-permute(1:nrow(data_perm))
+  iperm<-gtools::permute(1:nrow(data_perm))
   data_perm[,which(group==num_group)]<-data_perm[iperm,which(group==num_group)]
   names(data_perm)<-names(data)
   return(data_perm)
 }
-
-# =========================================================================================
-# grpimpperm()
-# =========================================================================================
-
 
 
 #' Title
@@ -253,7 +274,6 @@ perm<-function(oobsamples,data,num_group,group){
 #' @param impurityacc 
 #'
 #' @return
-#' @export
 #'
 #' @examples
 grpimpperm<-function(num_group,data,oobsamples,group,tree,impurityacc){
@@ -335,18 +355,19 @@ predict.cartgv<-function(new,tree,carts,coups){
       i<-1
     }
   }
-  res<-as.data.frame(cbind(Y=as.numeric(as.character(new$Y)),hat.Y=as.numeric(as.character(pred)),noeuds=as.character(noeuds),score=as.numeric(as.character(score)),i_noeuds=as.numeric(as.character(i_noeuds))))
+  
+  res<-as.data.frame(cbind(Y=as.numeric(as.character(new$Y)),
+                           hat.Y=as.numeric(as.character(pred)),
+                           noeuds=as.character(noeuds),
+                           score=as.numeric(as.character(score)),
+                           i_noeuds=as.numeric(as.character(i_noeuds))))
+  
   names(res)<-c("Y","hat.Y","noeuds","score","i_noeuds")
   if("2"%in%res$Y){res$Y<-ifelse(res$Y=="2","1","0")}
   if("2"%in%res$hat.Y){res$hat.Y<-ifelse(res$hat.Y=="2","1","0")}
   return(res)
 }
 
-
-
-# =========================================================================================
-# predict.test.cartgv() ### Test Pierre
-# =========================================================================================
 
 #' Title
 #'
@@ -362,7 +383,6 @@ predict.cartgv<-function(new,tree,carts,coups){
 #'  - Y : la classe d'appartenance
 #'  - noeuds : le numero du noeud contenant l'observation
 #'  - score : le score le l'observation
-#' @export
 #'
 #' @examples
 predict.test.cartgv <- function(new, tree, carts, coups) {
@@ -464,8 +484,12 @@ impurity.cartgv <- function(validation, tree_seq,tree) {
     n1 <- tapply(as.numeric(as.character(predictions$Y)), as.numeric(as.character(predictions$noeuds)),sum)
     p1 <- n1 / n
     p0 <- 1 - p1
-    predictions$error.pred <-as.numeric(as.character(apply(predictions[, c("hat.Y", "Y")], 1, function(x)ifelse(x[1] != x[2], "1", "0"))))
-    misclass <-tapply(as.numeric(as.character(predictions$error.pred)), as.numeric(as.character(predictions$noeuds)), sum)
+    predictions$error.pred <-as.numeric(as.character(apply(predictions[, c("hat.Y", "Y")], 
+                                                           1, 
+                                                           function(x)ifelse(x[1] != x[2], "1", "0"))))
+    misclass <-tapply(as.numeric(as.character(predictions$error.pred)), 
+                      as.numeric(as.character(predictions$noeuds)), 
+                      sum)
     summaryNoeuds <-as.data.frame(cbind(as.numeric(as.character(names(table(as.numeric(as.character(predictions$noeuds)))))), n, n1, p1, p0, misclass))
     names(summaryNoeuds) <-c("nom_noeuds","N","N[Y=1]","P[Y=1]","P[Y=0]","hat.Y!=Y")
     impurete[k, 1] <- sum(apply(summaryNoeuds, 1, function(x)x[2] * gini(x[c(4, 5)]))) / N
