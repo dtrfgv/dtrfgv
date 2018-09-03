@@ -1,13 +1,12 @@
-
-
-
-#' Title
+#' perf
+#' 
+#' Optimal cut
+#' 
 #' Trouver le seuil qui permet le meilleur compromis sensibilite-specificite
 #'
 #' @param perf 
 #'
 #' @return
-#' @export
 #'
 #' @examples
 opt.cut = function(perf) {
@@ -29,13 +28,12 @@ opt.cut = function(perf) {
 }
 
 
-#' Title
+#' performances
 #'
 #' @param score 
 #' @param test 
 #'
 #' @return
-#' @export
 #' @importFrom ROCR performance
 #' @examples
 performances <- function(score, test) {
@@ -76,8 +74,10 @@ performances <- function(score, test) {
 
 
 
-#' Title 
+#' xtab function
+#' 
 #' Matrice de confusion + performances predictives 
+#' 
 #' (gere quand le modele predit tout en 1 ou 0)
 #'
 #' @param predY 
@@ -86,8 +86,6 @@ performances <- function(score, test) {
 #' @return
 #' 
 #' @importFrom caret confusionMatrix
-#' 
-#' @export
 #'
 #' @examples
 xtab_function<-function(predY,Y){

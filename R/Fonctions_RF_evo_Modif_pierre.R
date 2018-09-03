@@ -2,11 +2,8 @@
 ########################         Random Forests algorithm           ########################
 ############################################################################################
 
-# =========================================================================================
-# Impurity functions
-# =========================================================================================
-#' Title
-#'
+#' Title Impurity functions
+#' works for the case when y has only 0 and 1 categorie...
 #' @param p 
 #'
 #' @return
@@ -14,51 +11,53 @@
 #'
 #' @examples
 entropy <- function(p) {
-  if (any(p == 1)) return(0)# works for the case when y has only 0 and 1 categorie...-sum(p *
+  if (any(p == 1)) return(0)# -sum(p *
   -sum(p*log(p,2)) 
 }
 
-#' Title
+#' Gini
 #'
 #' @param p 
 #'
-#' @return
-#' @export
+#' @return sum(p * (1 - p))
 #'
-#' @examples
+#' @examples gini(p)
 gini <- function(p) {
   sum(p * (1 - p))
 }
 
-#' Title
+#' bsamples
+#' 
+#' Bootstrap samples
+#' 
+#' Function which takes as inputs two integers "B" and "sampsize", 
+#' a sample of data "data" and a boolean "replace".   
+#' The function draws randomly B bootstrap samples of size "sampsize"
+#'  (the size of the sample of data) 
 #'
-#' Function which takes as inputs two integers "B" and "sampsize", a sample of data "data" 
-#' and a boolean "replace".   
-#' The function draws randomly B bootstrap samples of size "sampsize" (the size of the sample of data) 
-#' and returns a matrix which with sampsize lines and B columns which contains the indices of 
-#' the observationsbelonging each boostrap sample. 
-#'
-#' @param ntree 
+#' @param ntree threes number
 #' @param data data sample
 #' @param sampsize integer
 #' @param replace boolean
 #'
-#' @return
-#' @export
+#' @return a matrix which with sampsize lines and B columns which 
+#' contains the indices of the observations belonging each boostrap sample. 
 #'
-#' @examples
+#' @examples bsamples(ntree,data,sampsize,replace)
 bsamples<-function(ntree,data,sampsize,replace){
   N<-nrow(data)
-  bsamples<-apply(matrix(rep(1:N,ntree),ncol=ntree,nrow=N),2,sample,size=sampsize,replace=replace)
+  bsamples<-apply(matrix(rep(1:N,ntree),ncol=ntree,nrow=N),
+                  2,sample,size=sampsize,replace=replace)
   oobsamples<-lapply(1:ntree,function(x)setdiff(1:N,bsamples[,x]))
-  return(list(bsamples=bsamples,oobsamples=oobsamples))
+  return(list(bsamples=bsamples,
+              oobsamples=oobsamples))
 }
 
 
 
 
-#' Title
-#' group.selection() 
+#' group.selection
+#' 
 #' Function which takes inputs the vector "group" which indicates the group that contain each 
 #' variable and a number "mtry" (m<=length(group)).
 #' The function selects randomly mtry groups among the length(group) groups and returns a 
@@ -69,7 +68,6 @@ bsamples<-function(ntree,data,sampsize,replace){
 #' @param mtry 
 #'
 #' @return
-#' @export
 #'
 #' @examples
 group.selection<-function(group,mtry=sqrt(unique(group[!is.na(group)]))){
@@ -90,54 +88,37 @@ group.selection<-function(group,mtry=sqrt(unique(group[!is.na(group)]))){
   return(groups)
 }
 
-# =========================================================================================
-# rfgv() 
-# Functions which takes as inputs:
-#     data         = a data frame containing the response value and the predictors and used to grow the tree
-#     group        = a vector with the group number of each variable 
-#                    (WARNING : if there are p goups, the groups must be numbers from 1 to p in increasing order)
-#     groupImp     = a vector with the group number of each variable ==> the group used to compute the variable importance
-#     ntree        = the number of trees to grow 
-#     sampsize     = the size of each boostrap sample
-#     mtry         = the number of variables randomly samples as candidates at each split
-#     replace      = Drawn of the bootstrap samples with or without replacment
-#     case_min     = minimun number of cases/non cases in a terminal nodes. For CARTGV, the default
-#                    is 1 while it is the number of fold for TPLDA.
-#     importance   = a boolean indicating the claculation or not of the importance of eacg group
-#     test         = an independent data frame containing the same value that data
-#     keep_forest  = a boolean indicating if the forest will be retained in the output object
-#     crit         = the impurity function used (1=Gini/2=Entropie/3=Misclas)
-#     maxdepth     =  only used with method="CARTGV". Integer indicating the maximal depth for a split-tree.
-#                   The default value is 2.
-#     kfold        = only used with method="TPLDA". Integer indicating the numberof folds required 
-#                   in the crossvalidation used to select the value of lambda.
-#     sampvar      = a boolean indicating if within each tree-split, a subset of variables is drawn for each group
-#     mtry_var     = usefull only if sampvar=TRUE. It indicates the number of drawn variables
-#     sampvar_type = if sampvar_type="1" for each group a subset of variables belonging to the group is drawn at the beging of the 
-#                    tree-split and only these variables are used to build the tree-split.
-#                    if sampvar_type="2" for each group, a subset of variables belonging to the group is drawn before each split withion the tree-split.
-# =========================================================================================
 
-#' Title
+#' rfgv
+#' 
+#' Random Forest for Grouped Variables
 #'
-#' @param data 
-#' @param group 
-#' @param groupImp 
-#' @param ntree 
-#' @param mtry_group 
-#' @param maxdepth 
-#' @param kfold 
-#' @param replace 
-#' @param sampsize 
-#' @param case_min 
-#' @param grp.importance 
-#' @param test 
-#' @param keep_forest 
-#' @param crit 
+#' @param data a data frame containing the response value and the predictors 
+#' and used to grow the tree
+#' @param group a vector with the group number of each variable 
+#  (WARNING : if there are p goups, the groups must be numbers from 1 to p in increasing order)
+#' @param groupImp a vector with the group number of each variable ==> the group used to compute the variable importance
+#' @param ntree the number of trees to grow 
+#' @param mtry_group the number of variables randomly samples as candidates at each split
+#' @param maxdepth only used with method="CARTGV". Integer indicating the maximal depth for a split-tree.
+#'                  The default value is 2.
+#' @param kfold only used with method="TPLDA". Integer indicating the numberof folds required 
+#'                   in the crossvalidation used to select the value of lambda.
+#' @param replace Drawn of the bootstrap samples with or without replacment
+#' @param sampsize the size of each boostrap sample
+#' @param case_min minimun number of cases/non cases in a terminal nodes. For CARTGV, the default
+#'                   is 1 while it is the number of fold for TPLDA.
+#' @param grp.importance a boolean indicating the claculation or not of the importance of eacg group
+#' @param test an independent data frame containing the same value that data
+#' @param keep_forest a boolean indicating if the forest will be retained in the output object
+#' @param crit the impurity function used (1=Gini/2=Entropie/3=Misclas)
 #' @param penalty 
-#' @param sampvar 
-#' @param sampvar_type 
-#' @param mtry_var 
+#' @param sampvar a boolean indicating if within each tree-split, a subset of variables is drawn for each group
+#' @param sampvar_type if sampvar_type="1" for each group a subset of variables belonging to the group 
+#' is drawn at the beging of the tree-split and only these variables are used to build the tree-split.
+#' if sampvar_type="2" for each group, a subset of variables belonging to the group is drawn before each 
+#' split withion the tree-split.
+#' @param mtry_var usefull only if sampvar=TRUE. It indicates the number of drawn variables
 #'
 #' @return
 #' @export
@@ -166,11 +147,26 @@ group.selection<-function(group,mtry=sqrt(unique(group[!is.na(group)]))){
 #'              keep_forest=F,
 #'              crit=1,
 #'              penalty="No")
-rfgv<-function(data,group,groupImp,ntree=200,mtry_group=floor(sqrt(length(unique(group[!is.na(group)])))),
-             maxdepth=1,kfold=3,replace=T,sampsize=ifelse(replace==T,nrow(data),floor(0.632*nrow(data))),
-             case_min=1,grp.importance=TRUE,test=NULL,keep_forest=F,crit=1,penalty="No",
-             sampvar=FALSE,sampvar_type="1",
-             mtry_var=sapply(as.numeric(table(group[!is.na(group)])),function(x)floor(sqrt(x)))){
+rfgv<-function(data,
+               group,
+               groupImp,
+               ntree=200,
+               mtry_group=floor(sqrt(length(unique(group[!is.na(group)])))),
+               maxdepth=1,
+               kfold=3,
+               replace=T,
+               sampsize=ifelse(replace==T,nrow(data),floor(0.632*nrow(data))),
+               case_min=1,
+               grp.importance=TRUE,
+               test=NULL,
+               keep_forest=F,
+               crit=1,
+               penalty="No",
+               sampvar=FALSE,
+               sampvar_type="1",
+               mtry_var=sapply(as.numeric(table(group[!is.na(group)])),
+                               function(x)floor(sqrt(x))))
+{
   nbgrp<-length(unique(group[!is.na(group)]))
   predicted<-matrix(rep(NA,nrow(data)*ntree),ncol=ntree)
   vote<-matrix(rep(NA,nrow(data)*2),ncol=2)
@@ -188,28 +184,39 @@ rfgv<-function(data,group,groupImp,ntree=200,mtry_group=floor(sqrt(length(unique
   if(grp.importance==TRUE){
     nbgrpImp<-length(unique(groupImp[!is.na(groupImp)]))
     acc<-rep(NA,1)
-    decreaacc<-matrix(rep(0,ntree*length(unique(groupImp[!is.na(groupImp)]))),nrow=ntree)
+    decreaacc<-matrix(rep(0,ntree*length(unique(groupImp[!is.na(groupImp)]))),
+                      nrow=ntree)
     MeanDecrAcc<-rep(0,nbgrpImp)
   }
   samples<-bsamples(ntree=ntree,data,sampsize,replace)
   for(b in 1:ntree){
     #if(sampvar==TRUE & sampvar_type=="2" & maxdepth>1){
-      tree<-cartgv.rf(data[unlist(samples$bsamples[,b]),],group,crit=crit,case_min=case_min,maxdepth=maxdepth,
-                      p=mtry_group,penalty=penalty,mtry_var=mtry_var)
+      tree<-cartgv.rf(data[unlist(samples$bsamples[,b]),],
+                      group,
+                      crit=crit,
+                      case_min=case_min,
+                      maxdepth=maxdepth,
+                      p=mtry_group,
+                      penalty=penalty,
+                      mtry_var=mtry_var)
       predicted[unlist(samples$oobsamples[[b]]),b]<-as.numeric(as.character(predict.cartgv.rf(data[unlist(samples$oobsamples[[b]]),], tree$tree,tree$tree_split)$hat.Y))
       
     #}else{
-      #tree<-cartgv(data[unlist(samples$bsamples[,b]),],group,crit=crit,case_min=case_min,maxdepth=maxdepth,
-      #            p=mtry_group,RF=T, IMPORTANCE=FALSE,penalty=penalty,sampvar=sampvar,mtry_var=mtry_var)
+      #tree<-cartgv(data[unlist(samples$bsamples[,b]),],
+      #group,crit=crit,case_min=case_min,maxdepth=maxdepth,
+      #            p=mtry_group,RF=T, IMPORTANCE=FALSE,
+      #penalty=penalty,sampvar=sampvar,mtry_var=mtry_var)
       #predicted[unlist(samples$oobsamples[[b]]),b]<-as.numeric(as.character(predict.cartgv(data[unlist(samples$oobsamples[[b]]),], tree$tree,tree$carts,tree$tables_coupures)$hat.Y))
       
     #}
     err[b]<-length(which(predicted[unlist(samples$oobsamples[[b]]),b]!=data$Y[unlist(samples$oobsamples[[b]])]))/length(data$Y[unlist(samples$oobsamples[[b]])])
     if(grp.importance==TRUE){
       if(sampvar==TRUE & sampvar_type=="2" & maxdepth>1){
-        acc<-1-as.numeric(impurity.cartgv.rf(data[unlist(samples$oobsamples[[b]]),], list(tree$tree),tree)$impurete$Misclass[1])
+        acc<-1-as.numeric(impurity.cartgv.rf(data[unlist(samples$oobsamples[[b]]),],
+                                             list(tree$tree),tree)$impurete$Misclass[1])
       }else{
-        acc<-1-as.numeric(impurity.cartgv(data[unlist(samples$oobsamples[[b]]),], list(tree$tree),tree)$impurete$Misclass[1])
+        acc<-1-as.numeric(impurity.cartgv(data[unlist(samples$oobsamples[[b]]),], 
+                                          list(tree$tree),tree)$impurete$Misclass[1])
       }
       groupselec<-unique(as.numeric(as.character(tree$tree$var[which(tree$tree$action == "1")])))
       if(sampvar==TRUE & sampvar_type=="2" & maxdepth>1){
@@ -275,9 +282,27 @@ rfgv<-function(data,group,groupImp,ntree=200,mtry_group=floor(sqrt(length(unique
     importance<-NULL
   }
   
-  return(list(forest=forest,predicted=predicted,importance=importance,err.rate=err.rate,vote=vote,pred=pred,
-              confusion=confusion,err.rate.test=err.rate.test,vote.test=vote.test,pred.test=pred.test,confusion.test=confusion.test,
-              oob.times=oob.times,cum.err=cum.err,cum.err.test=cum.err.test,keep_forest=keep_forest,sampvar=sampvar,sampvar_type=sampvar_type,maxdepth=maxdepth,mtry_group=mtry_group,mtry_var=mtry_var,ntree=ntree))
+  return(list(forest=forest,
+              predicted=predicted,
+              importance=importance,
+              err.rate=err.rate,
+              vote=vote,
+              pred=pred,
+              confusion=confusion,
+              err.rate.test=err.rate.test,
+              vote.test=vote.test,
+              pred.test=pred.test,
+              confusion.test=confusion.test,
+              oob.times=oob.times,
+              cum.err=cum.err,
+              cum.err.test=cum.err.test,
+              keep_forest=keep_forest,
+              sampvar=sampvar,
+              sampvar_type=sampvar_type,
+              maxdepth=maxdepth,
+              mtry_group=mtry_group,
+              mtry_var=mtry_var,
+              ntree=ntree))
 }
 
 
@@ -288,7 +313,6 @@ rfgv<-function(data,group,groupImp,ntree=200,mtry_group=floor(sqrt(length(unique
 #     rfgvobject      = a vector with the group number of each variable 
 #     
 # =========================================================================================
-
 # predict.rfgv<-function(newdata,rfgvobject){
 #   pred<-matrix(rep(NA,nrow(newdata)*rfgvobject$ntree),nrow=nrow(newdata))
 #   if(keep_forest==T){

@@ -1,5 +1,8 @@
 
-#' Title
+#' cartgv
+#' 
+#' Classification And Regression Trees for Grouped Variables
+#' 
 #' Function which takes as inputs a integer "B"  and a sample of data "data" . The function 
 #' draws randomly B bootstrap samples of size N (the size of the sample of data) and returns 
 #' a matrix which with N lines and B columns which contains the indices of the observations 
@@ -18,7 +21,6 @@
 #' @param mtry_var usefull only if sampvar=TRUE. It indicates the number of drawn variables
 #'
 #' @return
-#' la fonction renvoie une liste contenant dans l'ordre : 
 #'    - tree : data.frame "resumant" l'arbre construit 
 #'    - carts : liste des arbres carts utilises pour elaborer l'arbre
 #'    - splits : liste donnant pour chaque noeud la valeur de la fonction Split_Tree_CART()
