@@ -2,7 +2,7 @@
 % Please edit documentation in R/Fonctions_CARTGVRF_sampvar2.R
 \name{cartgv_split}
 \alias{cartgv_split}
-\title{Title}
+\title{cartgv_split()}
 \usage{
 cartgv_split(data, group, crit = 1, case_min = 1, maxdepth = 2,
   p = floor(sqrt(length(unique(group[!is.na(group)])))),
@@ -24,5 +24,8 @@ cartgv_split(data, group, crit = 1, case_min = 1, maxdepth = 2,
 \item{penalty}{}
 }
 \description{
-Title
+Utilisé quand sampvar=TRUE et sampvar_type="2" et maxdepth>1
+==> dans l'arbre de coupure avant chaque coupure on tire un sous ensemble de variable
+Cette fonction faire un arbre de coupure pour un group donné
+(donc group=1:nombre de variables dans le group).
 }

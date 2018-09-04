@@ -2,7 +2,7 @@
 % Please edit documentation in R/Fonctions_CARTGVRF_sampvar2.R
 \name{predict.cartgv.rf}
 \alias{predict.cartgv.rf}
-\title{Title}
+\title{predict.cartgv}
 \usage{
 \method{predict}{cartgv.rf}(new, tree, tree_split)
 }
@@ -14,5 +14,8 @@
 \item{tree_split}{}
 }
 \description{
-Title
+la fonction fait appel à la fonction predict.cartgv()
+IMPORTANT : i_noeuds (indice du noeud dans l'arbre de coupure,
+càd indice donné par rpart) et noeuds (indice du noeud dans l'arbre cartgv)
+utilisées comme clés primaires pour identifier de manière unique un noeuds
 }

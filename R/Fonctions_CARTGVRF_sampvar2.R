@@ -4,10 +4,13 @@
 ############################################################################################
 
 
-### A utiliser quand sampvar=TRUE and sampvar_type="2 ==> permet de construire un arbre cartgv tel que dans chaque arbre de 
-# coupure un sous-ensemble de variables est tiré au hasard avant chaque coupure
-#' Title
+### 
+#' Classification Random Tree for Grouped Variables using Random Forest.
 #'
+#' A utiliser quand sampvar=TRUE and sampvar_type="2 ==> permet de construire un arbre 
+#' cartgv tel que dans chaque arbre de 
+#' coupure un sous-ensemble de variables est tiré au hasard avant chaque coupure
+#' 
 #' @param data 
 #' @param group 
 #' @param crit 
@@ -21,9 +24,15 @@
 #' @export
 #'
 #' @examples
-cartgv.rf<-function(data,group,crit=1,case_min=1,maxdepth=2,p=floor(sqrt(length(unique(group[!is.na(group)])))),
+cartgv.rf<-function(data,
+                    group,
+                    crit=1,
+                    case_min=1,
+                    maxdepth=2,
+                    p=floor(sqrt(length(unique(group[!is.na(group)])))),
                     penalty="No",
-                    mtry_var=sapply(as.numeric(table(group[!is.na(group)])),function(x)floor(sqrt(x)))){
+                    mtry_var=sapply(as.numeric(table(group[!is.na(group)])),function(x)floor(sqrt(x))))
+  {
   ##Initialisation
   tree<-NULL
   parent<-c()#Noeud ancetre du noeud
@@ -71,9 +80,14 @@ cartgv.rf<-function(data,group,crit=1,case_min=1,maxdepth=2,p=floor(sqrt(length(
       tree_splits<-list()
       improvment_splits<-rep(NA,length(igroups))
       for(l in 1:length(igroups)){
-        tree_splits[[l]]<-cartgv_split(data=node[,c(1,which(group==igroups[l]))],group=c(NA,1:length(which(group==igroups[l]))),
-                                      crit=crit,case_min=1,maxdepth=maxdepth,p=min(mtry_var[igroups[l]], length(which(group==igroups[l]))),penalty="No")
-        improvment_splits[l]<-length(node$Y)*(node_impurity-impurity.cartgv(node[,c(1,which(group==igroups[l]))], list(tree_splits[[l]]$tree),tree_splits[[l]])$impurete[,crit])                       
+        tree_splits[[l]]<-cartgv_split(data=node[,c(1,which(group==igroups[l]))],
+                                       group=c(NA,1:length(which(group==igroups[l]))),
+                                      crit=crit,case_min=1,maxdepth=maxdepth,
+                                      p=min(mtry_var[igroups[l]], 
+                                            length(which(group==igroups[l]))),penalty="No")
+        improvment_splits[l]<-length(node$Y)*(node_impurity-impurity.cartgv(node[,c(1,which(group==igroups[l]))], 
+                                                                            list(tree_splits[[l]]$tree),
+                                                                            tree_splits[[l]])$impurete[,crit])                       
         group.size<-length(which(group==igroups[l]))
         if(penalty=="Size"){
           improvment_splits[l]<-improvment_splits[l]/group.size
@@ -137,14 +151,12 @@ cartgv.rf<-function(data,group,crit=1,case_min=1,maxdepth=2,p=floor(sqrt(length(
 }
 
 
-# =========================================================================================
-# predict.cartgv.rf()
-# =========================================================================================
-
-
-### la fonction fait appel à la fonction predict.cartgv()
-### IMPORTANT : i_noeuds (indice du noeud dans l'arbre de coupure, càd indice donné par rpart) et noeuds (indice du noeud dans l'arbre cartgv) utilisées comme clés primaires pour identifier de manière unique un noeuds
-#' Title
+#' predict.cartgv
+#'
+#' la fonction fait appel à la fonction predict.cartgv()
+#' IMPORTANT : i_noeuds (indice du noeud dans l'arbre de coupure, 
+#' càd indice donné par rpart) et noeuds (indice du noeud dans l'arbre cartgv) 
+#' utilisées comme clés primaires pour identifier de manière unique un noeuds
 #'
 #' @param new 
 #' @param tree 
@@ -230,31 +242,39 @@ impurity.cartgv.rf <- function(validation, tree_seq,tree) {
   list(impurete = impurete,pred = pred,summary_noeuds = sum_noeuds)
 }
 
-
-# =========================================================================================
-# grpimpperm.rf()
-# =========================================================================================
-
-
-
-grpimpperm.rf<-function(num_group,data,oobsamples,group,tree,impurityacc){
+#' grpimpperm.rf
+#'
+#' @param num_group 
+#' @param data 
+#' @param oobsamples 
+#' @param group 
+#' @param tree 
+#' @param impurityacc 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+grpimpperm.rf<-function(num_group,
+                        data,
+                        oobsamples,
+                        group,
+                        tree,
+                        impurityacc)
+  {
   data_perm<-perm(oobsamples,data,num_group,group)
   accperm<-1-impurity.cartgv.rf(data_perm,list(tree$tree),tree)$impurete$Misclass# accurancy=1-misclass
   DecreaseAcc<-impurityacc-accperm
   return(DecreaseAcc)
 }
 
-# =========================================================================================
-# cartgv_split()
-# =========================================================================================
 
-
-#Utilisé quand sampvar=TRUE et sampvar_type="2" et maxdepth>1 
-# ==> dans l'arbre de coupure avant chaque coupure on tire un sous ensemble de variable
-## Cette fonction faire un arbre de coupure pour un group donné 
-# (donc group=1:nombre de variables dans le group).
-
-#' Title
+#' cartgv_split()
+#'
+#' Utilisé quand sampvar=TRUE et sampvar_type="2" et maxdepth>1 
+#' ==> dans l'arbre de coupure avant chaque coupure on tire un sous ensemble de variable
+#' Cette fonction faire un arbre de coupure pour un group donné 
+#' (donc group=1:nombre de variables dans le group).
 #'
 #' @param data 
 #' @param group 
@@ -346,10 +366,13 @@ cartgv_split<-function(data,group,crit=1,case_min=1,maxdepth=2,p=floor(sqrt(leng
   node<-1:length(depth)
   leave<-ifelse(action<0,"*",ifelse(depth==maxdepth,"*",""))
   improvment<-round(improvment,4)
-  tree<-as.data.frame(cbind(action,var,depth,parent,n,n_case,n_noncase,yval,prob,leave,node,improvment,i_node_coupure))
+  tree<-as.data.frame(cbind(action,var,depth,parent,n,n_case,
+                            n_noncase,yval,prob,leave,node,
+                            improvment,i_node_coupure))
   rownames(groups_selec)<-paste("split",1:nrow(groups_selec),seq=" ")
   colnames(groups_selec)<-paste(1:ncol(groups_selec),"th group selected",seq=" ")
-  return(list(tree=tree,carts=carts,splits=splits,pop=pop,tables_coupures=tables_coupures,groups_selec=groups_selec))
+  return(list(tree=tree,carts=carts,splits=splits,pop=pop,
+              tables_coupures=tables_coupures,groups_selec=groups_selec))
 }
 
 

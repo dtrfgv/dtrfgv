@@ -2,7 +2,7 @@
 % Please edit documentation in R/Fonctions_CARTGVRF_sampvar2.R
 \name{cartgv.rf}
 \alias{cartgv.rf}
-\title{Title}
+\title{Classification Random Tree for Grouped Variables using Random Forest.}
 \usage{
 cartgv.rf(data, group, crit = 1, case_min = 1, maxdepth = 2,
   p = floor(sqrt(length(unique(group[!is.na(group)])))),
@@ -28,5 +28,7 @@ cartgv.rf(data, group, crit = 1, case_min = 1, maxdepth = 2,
 \item{mtry_var}{}
 }
 \description{
-Title
+A utiliser quand sampvar=TRUE and sampvar_type="2 ==> permet de construire un arbre
+cartgv tel que dans chaque arbre de
+coupure un sous-ensemble de variables est tiré au hasard avant chaque coupure
 }
