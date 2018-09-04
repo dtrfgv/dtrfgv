@@ -3,7 +3,6 @@
 .RData
 .Ruserdata
 *.swp
-*.Rd
 *.log
 # History files
 .Rhistory
