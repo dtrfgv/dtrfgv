@@ -39,7 +39,7 @@ gini <- function(p) {
 #' @param data data sample
 #' @param sampsize integer
 #' @param replace boolean
-#'
+#' @export
 #' @return a matrix which with sampsize lines and B columns which 
 #' contains the indices of the observations belonging each boostrap sample. 
 #'

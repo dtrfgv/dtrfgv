@@ -3,6 +3,7 @@
 S3method(predict,cartgv)
 S3method(predict,cartgv.rf)
 S3method(split,cartgv)
+export(bsamples)
 export(calcul_cart)
 export(cartgv)
 export(cartgv.rf)
