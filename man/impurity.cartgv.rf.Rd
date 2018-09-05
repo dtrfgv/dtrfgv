@@ -13,6 +13,9 @@ impurity.cartgv.rf(validation, tree_seq, tree)
 
 \item{tree}{}
 }
+\value{
+list
+}
 \description{
 calcul de l'impurete
 }

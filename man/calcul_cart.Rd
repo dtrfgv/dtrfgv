@@ -18,9 +18,10 @@ liste  :
 ("node_name_cart"= numero du noeud,"parent"=ancêtre,"depth"=profondeur du noeud,
 "var"=variable utilisée pour couper le noeud,"threshold"=seuil de la coupure,
 "n"=effectif du noeud,"pred"=label du neoud,"n_noncase"= nombre d'observation "Y=0" dans le noeuds
-,"n_case"=nombre d'individus "Y=1" dans le noeud,"prob"= P\link{Y=1|N},
+,"n_case"=nombre d'individus "\code{Y=1}" dans le noeud,"\code{prob = P[Y=1|N]}",
 "sens"=sens pour la règle de coupure divisant son noeud parent:
-le sous ensembles des observations verifiant x<threshold est envoyé à gauche si "inf" à droite sinon. )
+le sous ensembles des observations verifiant x<threshold est envoyé à gauche si
+"inf" à droite sinon. )
 }
 }
 \description{

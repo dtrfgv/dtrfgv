@@ -19,10 +19,10 @@ impurete_rpart(validation, tree_seq)
 \itemize{
 \item nom_noeuds = noms du noeuds
 \item N = nb obs dans le neoud
-\item N\link{Y=1} = nb d'obs dans le noeuds appartenant a' la class "Y=1"
-\item P\link{Y=1} = proba pour une obs du noeuds d'appartenanir  a' la class "Y=1"
-\item P\link{Y=0} = proba pour une obs du noeuds d'appartenanir  a' la class "Y=0"
-\item P\link{hat.Y!=Y} = tx de mal class'es dans le noeud
+\item \code{N[Y=1]} = nb d'obs dans le noeuds appartenant a' la class "Y=1"
+\item \code{P[Y=1]} = proba pour une obs du noeuds d'appartenanir  a' la class "Y=1"
+\item \code{P[Y=0]} = proba pour une obs du noeuds d'appartenanir  a' la class "Y=0"
+\item \code{P[hat.Y!=Y]} = tx de mal class'es dans le noeud
 }
 }
 }

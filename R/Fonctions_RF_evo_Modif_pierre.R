@@ -8,7 +8,7 @@
 #' 
 #' @param p 
 #'
-#' @return
+#' @return entropy
 #'
 entropy <- function(p) {
   if (any(p == 1)) return(0)# -sum(p *
@@ -65,7 +65,7 @@ bsamples<-function(ntree,data,sampsize,replace){
 #' @param group group that contain each variable
 #' @param mtry 
 #'
-#' @return
+#' @return groups
 #'
 group.selection<-function(group,mtry=sqrt(unique(group[!is.na(group)]))){
   if(length(which(is.na(group)))>0){
@@ -117,7 +117,7 @@ group.selection<-function(group,mtry=sqrt(unique(group[!is.na(group)]))){
 #' split withion the tree-split.
 #' @param mtry_var usefull only if sampvar=TRUE. It indicates the number of drawn variables
 #'
-#' @return
+#' @return forest list
 #' @export
 #'
 #' @examples
@@ -196,14 +196,14 @@ rfgv<-function(data,
                       p=mtry_group,
                       penalty=penalty,
                       mtry_var=mtry_var)
-      predicted[unlist(samples$oobsamples[[b]]),b]<-as.numeric(as.character(predict.cartgv.rf(data[unlist(samples$oobsamples[[b]]),], tree$tree,tree$tree_split)$hat.Y))
+      predicted[unlist(samples$oobsamples[[b]]),b]<-as.numeric(as.character(predict_cartgv.rf(data[unlist(samples$oobsamples[[b]]),], tree$tree,tree$tree_split)$hat.Y))
       
     #}else{
       #tree<-cartgv(data[unlist(samples$bsamples[,b]),],
       #group,crit=crit,case_min=case_min,maxdepth=maxdepth,
       #            p=mtry_group,RF=T, IMPORTANCE=FALSE,
       #penalty=penalty,sampvar=sampvar,mtry_var=mtry_var)
-      #predicted[unlist(samples$oobsamples[[b]]),b]<-as.numeric(as.character(predict.cartgv(data[unlist(samples$oobsamples[[b]]),], tree$tree,tree$carts,tree$tables_coupures)$hat.Y))
+      #predicted[unlist(samples$oobsamples[[b]]),b]<-as.numeric(as.character(predict_cartgv(data[unlist(samples$oobsamples[[b]]),], tree$tree,tree$carts,tree$tables_coupures)$hat.Y))
       
     #}
     err[b]<-length(which(predicted[unlist(samples$oobsamples[[b]]),b]!=data$Y[unlist(samples$oobsamples[[b]])]))/length(data$Y[unlist(samples$oobsamples[[b]])])
@@ -231,9 +231,9 @@ rfgv<-function(data,
     }
     if(!is.null(test)){
       if(sampvar==TRUE & sampvar_type=="2" & maxdepth>1){
-        test_predicted[,b]<-as.numeric(as.character(predict.cartgv.rf(test,tree$tree,tree$tree_split)$hat.Y))
+        test_predicted[,b]<-as.numeric(as.character(predict_cartgv.rf(test,tree$tree,tree$tree_split)$hat.Y))
       }else{
-        test_predicted[,b]<-as.numeric(as.character(predict.cartgv(test,tree$tree,tree$carts,tree$tables_coupures)$hat.Y))
+        test_predicted[,b]<-as.numeric(as.character(predict_cartgv(test,tree$tree,tree$carts,tree$tables_coupures)$hat.Y))
       }
       err[b]<-length(which(test_predicted[,b]!=test$Y))/length(test$Y)
       
@@ -301,26 +301,3 @@ rfgv<-function(data,
               mtry_var=mtry_var,
               ntree=ntree))
 }
-
-
-# =========================================================================================
-# predict.rfgv() 
-# Functions which takes as inputs:
-#     newdata         = a data frame containing the response value and the predictors and used to grow the tree
-#     rfgvobject      = a vector with the group number of each variable 
-#     
-# =========================================================================================
-# predict.rfgv<-function(newdata,rfgvobject){
-#   pred<-matrix(rep(NA,nrow(newdata)*rfgvobject$ntree),nrow=nrow(newdata))
-#   if(keep_forest==T){
-#     if(rfgvobject$sampvar==TRUE & rfgvobject$sampvar_type=="2" & rfgvobject$maxdepth>1){
-#       pred<-sapply(rfgvobject$forest,)
-#     }else{
-#       
-#     }
-#   }else{
-#     print("Prediction can be computed, restart the rfgv() function with the parameter keep_forest=TRUE")
-#   }
-# 
-# }
-

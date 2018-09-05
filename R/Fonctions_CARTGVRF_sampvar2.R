@@ -20,10 +20,9 @@ as.numeric.factor <- function(x) {as.numeric(as.character(x))}
 #' @param penalty 
 #' @param mtry_var 
 #'
-#' @return
+#' @return list
 #' @export
 #'
-#' @examples
 cartgv.rf<-function(data,
                     group,
                     crit=1,
@@ -166,9 +165,9 @@ cartgv.rf<-function(data,
 }
 
 
-#' predict.cartgv
+#' predict_cartgv.rf
 #'
-#' la fonction fait appel à la fonction predict.cartgv()
+#' la fonction fait appel à la fonction predict_cartgv()
 #' IMPORTANT : i_noeuds (indice du noeud dans l'arbre de coupure, 
 #' càd indice donné par rpart) et noeuds (indice du noeud dans l'arbre cartgv) 
 #' utilisées comme clés primaires pour identifier de manière unique un noeuds
@@ -177,11 +176,10 @@ cartgv.rf<-function(data,
 #' @param tree 
 #' @param tree_split 
 #'
-#' @return
+#' @return res
 #' @export
 #'
-#' @examples
-predict.cartgv.rf<-function(new,tree,tree_split){
+predict_cartgv.rf<-function(new,tree,tree_split){
   indx <- colnames(tree)
   indx <- indx[which(indx != 'leave')]
   tree[indx] <- lapply(tree[indx], as.numeric.factor)
@@ -198,7 +196,7 @@ predict.cartgv.rf<-function(new,tree,tree_split){
     ind<-new[p,]
     i<-1
     while(tree$action[which(tree$node==i)]>=1){
-      temp<-predict.cartgv(ind,
+      temp<-predict_cartgv(ind,
                            tree_split[[i]]$tree,
                            tree_split[[i]]$carts,
                            tree_split[[i]]$tables_coupures)
@@ -244,10 +242,9 @@ predict.cartgv.rf<-function(new,tree,tree_split){
 #' @param tree_seq 
 #' @param tree 
 #'
-#' @return
+#' @return list
 #' @export
 #'
-#' @examples
 impurity.cartgv.rf <- function(validation, tree_seq,tree) {
   N_tree <- length(tree_seq)
   N <- dim(validation)[1]
@@ -255,7 +252,7 @@ impurity.cartgv.rf <- function(validation, tree_seq,tree) {
   sum_noeuds <- list()
   impurete <- matrix(rep(NA, N_tree * 3), nrow = N_tree, ncol = 3)
   for (k in 1:N_tree) {
-    predictions <-as.data.frame(predict.cartgv.rf(validation,as.data.frame(tree_seq[[k]]),tree$tree_split))
+    predictions <-as.data.frame(predict_cartgv.rf(validation,as.data.frame(tree_seq[[k]]),tree$tree_split))
     predictions<-predictions[order(as.numeric(as.character(predictions$noeuds))),]
     n <- as.numeric(table(as.numeric(as.character(predictions$noeuds))))
     n1 <- tapply(as.numeric(as.character(predictions$Y)), as.numeric(as.character(predictions$noeuds)),sum)
@@ -318,10 +315,9 @@ grpimpperm.rf<-function(num_group,
 #' @param p 
 #' @param penalty 
 #'
-#' @return
-#' @export
+#' @return list
+#' @export 
 #'
-#' @examples
 cartgv_split<-function(data,group,crit=1,case_min=1,maxdepth=2,p=floor(sqrt(length(unique(group[!is.na(group)])))),penalty="No"){
   
   ##Initialisation
@@ -353,12 +349,22 @@ cartgv_split<-function(data,group,crit=1,case_min=1,maxdepth=2,p=floor(sqrt(leng
     prob[i]<-round((length(which(node$Y=="1"))/n[i]),4)
     n_case[i]<-length(which(node$Y=="1"))
     n_noncase[i]<-length(which(node$Y=="0"))
-    if (((n_case[i] > case_min) & (n_noncase[i] > case_min)) & depth[i]<maxdepth) {### Critères d'arrêt (Nbr min d'observations ou feuille "pure")
+    if (((n_case[i] > case_min) & (n_noncase[i] > case_min)) & depth[i]<maxdepth) {
+      ### Critères d'arrêt (Nbr min d'observations ou feuille "pure")
       igroups<-group.selection(group[!is.na(group)],mtry=p)
       groups_selec<-rbind(groups_selec,igroups)
-      splits[[i]]<-split.cartgv(node=node,group=group,igroups,label=yval[i],maxdepth=1,penalty="No",sampvar=FALSE)
+      
+      splits[[i]]<-split_cartgv(node=node,
+                                group=group,
+                                igroups,
+                                label=yval[i],
+                                maxdepth=1,
+                                penalty="No",
+                                sampvar=FALSE)
+      
       improvment[i]<-max(unlist(splits[[i]][[crit]]))
-      if (improvment[i] > 0){#y-a-t-il un groupe de variable qui ameliore l'impurete du noeud?
+      if (improvment[i] > 0){
+        #y-a-t-il un groupe de variable qui ameliore l'impurete du noeud?
         action[i] <- 1
         max.importance<-max(unlist(splits[[i]][[crit]]))
         if(length(which(unlist(splits[[i]][[crit]])==max.importance))>1){
@@ -366,7 +372,8 @@ cartgv_split<-function(data,group,crit=1,case_min=1,maxdepth=2,p=floor(sqrt(leng
         }else{
           ind_var<-which.max(unlist(splits[[i]][[crit]]))
         }
-        var[i] <- igroups[ind_var]#si oui, on choisit celui qui maximise la decroissance d'impurete
+        var[i] <- igroups[ind_var]
+        #si oui, on choisit celui qui maximise la decroissance d'impurete
         carts[[i]]<-splits[[i]]$carts[[ind_var]]
         tables_coupures[[i]]<-calcul_cart(carts[[i]],node)
         modalities<-unique(as.numeric(as.character(carts[[i]]$where)))

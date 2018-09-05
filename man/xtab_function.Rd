@@ -7,9 +7,12 @@
 xtab_function(predY, Y)
 }
 \arguments{
-\item{predY}{}
+\item{predY}{predicted Y}
 
-\item{Y}{}
+\item{Y}{tested}
+}
+\value{
+xtab
 }
 \description{
 Matrice de confusion + performances predictives

@@ -23,6 +23,9 @@ cartgv_split(data, group, crit = 1, case_min = 1, maxdepth = 2,
 
 \item{penalty}{}
 }
+\value{
+list
+}
 \description{
 Utilisé quand sampvar=TRUE et sampvar_type="2" et maxdepth>1
 ==> dans l'arbre de coupure avant chaque coupure on tire un sous ensemble de variable

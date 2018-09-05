@@ -23,13 +23,13 @@ cartgv(data, group, crit = 1, case_min = 1, maxdepth = 2,
 
 \item{maxdepth}{the max depth for a split-tree}
 
-\item{RF}{}
+\item{RF}{Random Forest}
 
 \item{penalty}{"No","Size","Root.size" or "Log"}
 
-\item{p}{}
+\item{p}{p parameter}
 
-\item{IMPORTANCE}{}
+\item{IMPORTANCE}{importance}
 
 \item{sampvar}{a boolean indicating if within each tree-split, a subset of variables is drawn for each group}
 

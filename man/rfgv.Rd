@@ -57,6 +57,9 @@ split withion the tree-split.}
 
 \item{mtry_var}{usefull only if sampvar=TRUE. It indicates the number of drawn variables}
 }
+\value{
+forest list
+}
 \description{
 Random Forest for Grouped Variables
 }

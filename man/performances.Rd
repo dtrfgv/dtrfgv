@@ -11,6 +11,9 @@ performances(score, test)
 
 \item{test}{}
 }
+\value{
+resultats
+}
 \description{
 performances
 }

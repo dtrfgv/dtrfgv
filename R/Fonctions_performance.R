@@ -36,7 +36,7 @@ opt.cut = function(perf) {
 #' @param score 
 #' @param test 
 #'
-#' @return
+#' @return resultats
 #' @importFrom ROCR performance
 performances <- function(score, test) {
   pred <- ROCR::prediction(score, as.factor(test[, 1]))
@@ -82,10 +82,10 @@ performances <- function(score, test) {
 #' 
 #' (gere quand le modele predit tout en 1 ou 0)
 #'
-#' @param predY 
-#' @param Y 
+#' @param predY predicted Y
+#' @param Y     tested
 #'
-#' @return
+#' @return xtab
 #' 
 #' @importFrom caret confusionMatrix
 #'

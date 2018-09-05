@@ -27,10 +27,10 @@ pred = liste des predictions pour chaque sous arbres
 summary_noeuds : liste contenant pour chaque sous-arbre des infos sur ses noeuds:
 nom_noeuds = noms du noeuds
 N = nb obs dans le neoud
-N\link{Y=1} = nb d'obs dans le noeuds appartenant a' la class "Y=1"
-P\link{Y=1} = proba pour une obs du noeuds d'appartenanir  a' la class "Y=1"
-P\link{Y=0} = proba pour une obs du noeuds d'appartenanir  a' la class "Y=0"
-P\link{hat.Y!=Y} = tx de mal class'es dans le noeud
+\code{N[Y=1]} = nb d'obs dans le noeuds appartenant a' la class "Y=1"
+\code{P[Y=1]} = proba pour une obs du noeuds d'appartenanir  a' la class "Y=1"
+\code{P[Y=0]} = proba pour une obs du noeuds d'appartenanir  a' la class "Y=0"
+\code{P[hat.Y!=Y]} = tx de mal class'es dans le noeud
 }
 \description{
 Title

@@ -20,13 +20,13 @@ as.numeric.factor <- function(x) {as.numeric(as.character(x))}
 #'      ("node_name_cart"= numero du noeud,"parent"=ancêtre,"depth"=profondeur du noeud,
 #'       "var"=variable utilisée pour couper le noeud,"threshold"=seuil de la coupure,
 #'        "n"=effectif du noeud,"pred"=label du neoud,"n_noncase"= nombre d'observation "Y=0" dans le noeuds
-#'        ,"n_case"=nombre d'individus "Y=1" dans le noeud,"prob"= P[Y=1|N], 
+#'        ,"n_case"=nombre d'individus "\code{Y=1}" dans le noeud,"\code{prob = P[Y=1|N]}", 
 #'        "sens"=sens pour la règle de coupure divisant son noeud parent: 
-#'              le sous ensembles des observations verifiant x<threshold est envoyé à gauche si "inf" à droite sinon. )
+#'              le sous ensembles des observations verifiant x<threshold est envoyé à gauche si 
+#'              "inf" à droite sinon. )
 #' 
 #' @import rpart
 #'
-#' @examples
 calcul_cart <- function(cart,data) {
   table<-cart$frame
   split<-cart$splits
@@ -135,9 +135,8 @@ calcul_cart <- function(cart,data) {
 #' @param new_obs une nouvelle observation (avec les memes variables que celle de l'echantillonn d'apprentissage)
 #' @param tableau sortie de la fonction calcul_cart()
 #'
-#' @return
+#' @return vector
 #'
-#' @examples
 pred_cart<-function(new_obs,tableau){
   i_node<-1
   while(as.character(tableau$var[i_node])!="<leaf>"){
@@ -190,12 +189,11 @@ pred_cart<-function(new_obs,tableau){
 #'  - summary_noeuds : liste contenant pour chaque sous-arbre des infos sur ses noeuds: 
 #'      - nom_noeuds = noms du noeuds
 #'      - N = nb obs dans le neoud
-#'      - N[Y=1] = nb d'obs dans le noeuds appartenant a' la class "Y=1" 
-#'      - P[Y=1] = proba pour une obs du noeuds d'appartenanir  a' la class "Y=1"
-#'      - P[Y=0] = proba pour une obs du noeuds d'appartenanir  a' la class "Y=0"
-#'      - P[hat.Y!=Y] = tx de mal class'es dans le noeud
+#'      - \code{N[Y=1]} = nb d'obs dans le noeuds appartenant a' la class "Y=1" 
+#'      - \code{P[Y=1]} = proba pour une obs du noeuds d'appartenanir  a' la class "Y=1"
+#'      - \code{P[Y=0]} = proba pour une obs du noeuds d'appartenanir  a' la class "Y=0"
+#'      - \code{P[hat.Y!=Y]} = tx de mal class'es dans le noeud
 #'
-#' @examples
 impurete_rpart <- function(validation, tree_seq) {
   N_tree <- length(tree_seq)
   N <- dim(validation)[1]
@@ -213,16 +211,17 @@ impurete_rpart <- function(validation, tree_seq) {
                                                                  &(tree_seq[[k]]$frame$yval==x[1]))[1], ]))
     predictions <-as.data.frame(cbind(p[, 1] - 1, as.numeric(as.character(validation$Y)), noeuds))
     names(predictions) <- c("hat.Y", "Y", "noeuds")
-    n <- as.numeric(table(as.numeric(as.character(predictions$noeuds))))
-    n1 <- tapply(as.numeric(as.character(predictions$Y)), as.numeric(as.character(predictions$noeuds)),sum)
+    n <- as.numeric(table(as.numeric.factor(predictions$noeuds)))
+    n1 <- tapply(as.numeric.factor(predictions$Y), 
+                 as.numeric.factor(predictions$noeuds),sum)
     p1 <- n1 / n
     p0 <- 1 - p1
-    predictions$error.pred <-as.numeric(as.character(apply(predictions[, c("hat.Y", "Y")], 
+    predictions$error.pred <-as.numeric.factor(apply(predictions[, c("hat.Y", "Y")], 
                                                            1, 
-                                                           function(x)ifelse(x[1] != x[2], "1", "0"))))
+                                                           function(x)ifelse(x[1] != x[2], "1", "0")))
     misclass <-tapply(as.numeric(as.character(predictions$error.pred)), 
                       as.numeric(as.character(predictions$noeuds)), sum)
-    summaryNoeuds <-as.data.frame(cbind(as.numeric(as.character(names(table(as.numeric(as.character(predictions$noeuds)))))), 
+    summaryNoeuds <-as.data.frame(cbind(as.numeric.factor(names(table(as.numeric.factor(predictions$noeuds)))), 
                                         n, n1, p1, p0, misclass))
     names(summaryNoeuds) <-c("nom_noeuds","N","N[Y=1]","P[Y=1]","P[Y=0]","P[hat.Y!=Y]")
     impurete[k, 1] <- sum(apply(summaryNoeuds, 1, function(x)x[2] * gini(x[c(4, 5)]))) / N

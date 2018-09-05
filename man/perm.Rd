@@ -15,6 +15,9 @@ perm(oobsamples, data, num_group, group)
 
 \item{group}{}
 }
+\value{
+data_perm
+}
 \description{
 perm
 }

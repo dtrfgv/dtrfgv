@@ -15,10 +15,10 @@ as.numeric.factor <- function(x) {as.numeric(as.character(x))}
 #' @param crit 1=Gini,2=Entropie,3=Misclassification error
 #' @param case_min minimum number of cases/non cases in a node which allows to split the node
 #' @param maxdepth the max depth for a split-tree
-#' @param RF 
+#' @param RF Random Forest
 #' @param penalty "No","Size","Root.size" or "Log"
-#' @param p 
-#' @param IMPORTANCE 
+#' @param p p parameter
+#' @param IMPORTANCE importance
 #' @param sampvar a boolean indicating if within each tree-split, a subset of variables is drawn for each group
 #' @param mtry_var usefull only if sampvar=TRUE. It indicates the number of drawn variables
 #'
@@ -34,7 +34,6 @@ as.numeric.factor <- function(x) {as.numeric(as.character(x))}
 #'    - cimportance1     : liste donnant pour chaque coupure et chaque groupe l'importance "corrigée" par la proba d'accord
 #' @export
 #'
-#' @examples
 cartgv<-function(data,
                  group,
                  crit=1,
@@ -89,7 +88,16 @@ cartgv<-function(data,
       }else{
         igroups<-unique(group[!is.na(group)])
       }
-      splits[[i]]<-split.cartgv(node=node,group=group,igroups,label=yval[i],maxdepth=maxdepth,penalty=penalty,sampvar=sampvar,mtry_var=mtry_var)
+      
+      splits[[i]]<-split_cartgv(node=node,
+                                group=group,
+                                igroups,
+                                label=yval[i],
+                                maxdepth=maxdepth,
+                                penalty=penalty,
+                                sampvar=sampvar,
+                                mtry_var=mtry_var)
+      
       improvment[i]<-max(unlist(splits[[i]][[crit]]))
       if (improvment[i] > 0){#y-a-t-il un groupe de variable qui ameliore l'impurete du noeud?
         action[i] <- 1
@@ -174,22 +182,21 @@ cartgv<-function(data,
               agreement=agreement))
 }
 
-#' split.cartgv()
+#' split_cartgv()
 #'
-#' @param node 
-#' @param group 
-#' @param igroups 
-#' @param label 
-#' @param maxdepth 
-#' @param penalty 
-#' @param sampvar 
-#' @param mtry_var 
+#' @param node node
+#' @param group group
+#' @param igroups group id
+#' @param label label
+#' @param maxdepth maxdepth
+#' @param penalty penalty
+#' @param sampvar sample variable
+#' @param mtry_var mtry variable
 #'
-#' @return
+#' @return list
 #' @export
 #' @importFrom stats predict as.formula
-#' @examples
-split.cartgv<-function(node,
+split_cartgv<-function(node,
                        group,
                        igroups,
                        label,
@@ -291,9 +298,8 @@ split.cartgv<-function(node,
 #' @param num_group 
 #' @param group 
 #'
-#' @return
+#' @return data_perm
 #'
-#' @examples
 perm<-function(oobsamples,data,num_group,group){
   data_perm<-data[oobsamples,]
   iperm<-gtools::permute(1:nrow(data_perm))
@@ -312,7 +318,6 @@ perm<-function(oobsamples,data,num_group,group){
 #' @param tree 
 #' @param impurityacc 
 #'
-#' @examples
 grpimpperm<-function(num_group,data,oobsamples,group,tree,impurityacc){
   data_perm<-perm(oobsamples,data,num_group,group)
   accperm<-1-impurity.cartgv(data_perm,list(tree$tree),tree)$impurete$Misclass# accurancy=1-misclass
@@ -327,9 +332,8 @@ grpimpperm<-function(num_group,data,oobsamples,group,tree,impurityacc){
 #' @param groupselec 
 #' @param tree 
 #'
-#' @return
+#' @return DecreaseImpurity
 #'
-#' @examples
 grpimpgini<-function(num_group,groupselec,tree){
   
   
@@ -345,7 +349,7 @@ grpimpgini<-function(num_group,groupselec,tree){
 }
 
 
-#' predict.cartgv
+#' predict_cartgv
 #' 
 #' Predict classification and regression tree for grouped variables
 #' 
@@ -354,14 +358,12 @@ grpimpgini<-function(num_group,groupselec,tree){
 #' et noeuds (indice du noeud dans l'arbre cartgv) utilisees comme cles primaires pour 
 #' identifier de manière unique un noeuds
 #'
-#' @param new 
-#' @param tree 
-#' @param carts 
-#' @param coups 
+#' @param new new tree
+#' @param tree old tree
+#' @param carts calssification and regression tree
+#' @param coups cuts
 #'
-#' @return
-#'  Valeurs retournees par la fonction : 
-#' la fonction renvoie une matrice donnant pour chaque individu de new (dans l'ordre) : 
+#' @return la fonction renvoie une matrice donnant pour chaque individu de new (dans l'ordre) : 
 #'  hat.Y :la classe predite
 #'  Y : la classe d'appartenance
 #'  noeuds : le numero du noeud contenant l'observation
@@ -369,8 +371,7 @@ grpimpgini<-function(num_group,groupselec,tree){
 
 #' @export
 #'
-#' @examples
-predict.cartgv<-function(new,tree,carts,coups){
+predict_cartgv<-function(new,tree,carts,coups){
   
   f <- function(x) as.numeric(as.character(x))
   indx <- colnames(tree)
@@ -434,7 +435,6 @@ predict.cartgv<-function(new,tree,carts,coups){
 #'  - noeuds : le numero du noeud contenant l'observation
 #'  - score : le score le l'observation
 #'
-#' @examples
 predict.test.cartgv <- function(new, tree, carts, coups) {
   P <- dim(new)[1]
   
@@ -507,20 +507,18 @@ predict.test.cartgv <- function(new, tree, carts, coups) {
 #' @param tree_seq objet retourné par la fonction Tree_CART_bin() ou Tree_CART()
 #' @param tree 
 #'
-#' @return
-#' List : 
+#' @return List : 
 #'   impurete : une matrice contenant les differentes valeurs d'impuret'e pour chaque sous-arbres
 #'   pred = liste des predictions pour chaque sous arbres
 #'   summary_noeuds : liste contenant pour chaque sous-arbre des infos sur ses noeuds: 
 #'                     nom_noeuds = noms du noeuds
 #'                     N = nb obs dans le neoud
-#'                     N[Y=1] = nb d'obs dans le noeuds appartenant a' la class "Y=1" 
-#'                     P[Y=1] = proba pour une obs du noeuds d'appartenanir  a' la class "Y=1"
-#'                     P[Y=0] = proba pour une obs du noeuds d'appartenanir  a' la class "Y=0"
-#'                     P[hat.Y!=Y] = tx de mal class'es dans le noeud
+#'                     \code{N[Y=1]} = nb d'obs dans le noeuds appartenant a' la class "Y=1" 
+#'                     \code{P[Y=1]} = proba pour une obs du noeuds d'appartenanir  a' la class "Y=1"
+#'                     \code{P[Y=0]} = proba pour une obs du noeuds d'appartenanir  a' la class "Y=0"
+#'                     \code{P[hat.Y!=Y]} = tx de mal class'es dans le noeud
 #' @export
 #'
-#' @examples
 impurity.cartgv <- function(validation, tree_seq,tree) {
   N_tree <- length(tree_seq)
   N <- dim(validation)[1]
@@ -528,7 +526,7 @@ impurity.cartgv <- function(validation, tree_seq,tree) {
   sum_noeuds <- list()
   impurete <- matrix(rep(NA, N_tree * 3), nrow = N_tree, ncol = 3)
   for (k in 1:N_tree) {
-    predictions <-as.data.frame(predict.cartgv(validation,
+    predictions <-as.data.frame(predict_cartgv(validation,
                                                as.data.frame(tree_seq[[k]]),
                                                tree$carts,
                                                tree$tables_coupures))

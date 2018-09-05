@@ -9,6 +9,9 @@ entropy(p)
 \arguments{
 \item{p}{}
 }
+\value{
+entropy
+}
 \description{
 works for the case when y has only 0 and 1 categorie...
 }

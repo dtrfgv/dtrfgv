@@ -11,6 +11,9 @@ group.selection(group, mtry = sqrt(unique(group[!is.na(group)])))
 
 \item{mtry}{}
 }
+\value{
+groups
+}
 \description{
 Function which takes inputs the vector "group" which indicates the group that contain each
 variable and a number "mtry" (m<=length(group)).

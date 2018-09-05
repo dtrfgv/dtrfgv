@@ -11,6 +11,9 @@ pred_cart(new_obs, tableau)
 
 \item{tableau}{sortie de la fonction calcul_cart()}
 }
+\value{
+vector
+}
 \description{
 Foncion permettant de donner le nom cart et l'indice du noeud (sortie de la fonction carts$where)
 qui contient une nouvelle observation

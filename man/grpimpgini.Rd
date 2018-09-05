@@ -13,6 +13,9 @@ grpimpgini(num_group, groupselec, tree)
 
 \item{tree}{}
 }
+\value{
+DecreaseImpurity
+}
 \description{
 grpimpgini
 }

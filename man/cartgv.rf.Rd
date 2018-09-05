@@ -27,6 +27,9 @@ cartgv.rf(data, group, crit = 1, case_min = 1, maxdepth = 2,
 
 \item{mtry_var}{}
 }
+\value{
+list
+}
 \description{
 A utiliser quand sampvar=TRUE and sampvar_type="2 ==> permet de construire un arbre
 cartgv tel que dans chaque arbre de
