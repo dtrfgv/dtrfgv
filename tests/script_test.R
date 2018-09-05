@@ -5,9 +5,9 @@ library(tplda)
 
 data(data_pour_tester_fonctions)
 
-indx = 'Y'
-data[indx] <-
-  lapply(data[indx], function(x) as.numeric(as.character(x)))
+#indx = 'Y'
+#data[indx] <-
+#  lapply(data[indx], function(x) as.numeric.factor(x))
      
 train<-data[which(data[,1]=="train"),-1]           # negative index into the `data` 
 test<-data[which(data[,1]=="test"),-1]             # object specifying all rows and all columns 

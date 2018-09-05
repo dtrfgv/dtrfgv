@@ -6,18 +6,21 @@
 #'
 #' @param perf 
 #'
-#' @return
+#' @return NULL
 #'
-#' @examples
 opt.cut = function(perf) {
   cut.ind = mapply(
     FUN = function(x, y, p) {
       d = (x - 0) ^ 2 + (y - 1) ^ 2
       ind = which(d == min(d))
       if (length(ind) == 1) {
-        c( sensitivity = y[[ind]],specificity = 1 - x[[ind]],cutoff = p[[ind]])
+        c( sensitivity = y[[ind]],
+           specificity = 1 - x[[ind]],
+           cutoff = p[[ind]])
       }else{
-        c(sensitivity = y[[ind[length(ind)]]],specificity = 1 - x[[ind[length(ind)]]],cutoff = p[[ind[length(ind)]]])
+        c(sensitivity = y[[ind[length(ind)]]],
+          specificity = 1 - x[[ind[length(ind)]]],
+          cutoff = p[[ind[length(ind)]]])
       }
     }
     ,
@@ -35,7 +38,6 @@ opt.cut = function(perf) {
 #'
 #' @return
 #' @importFrom ROCR performance
-#' @examples
 performances <- function(score, test) {
   pred <- ROCR::prediction(score, as.factor(test[, 1]))
   ## ROC curve
@@ -63,10 +65,10 @@ performances <- function(score, test) {
     xtab <- confusionMatrix(table(predY, as.factor(test[, 1])), positive = "1")
   }
   table <- xtab$table
-  conc <-(sum(diag(table(predY, as.factor(test[, 1])))) / sum(table(predY, as.factor(test[, 1]))))
-  sens <- as.numeric(xtab$byClass[1])
-  spe <- as.numeric(xtab$byClass[2])
-  auc <- performance(pred, "auc")@y.values[[1]]
+  conc  <- (sum(diag(table(predY, as.factor(test[, 1])))) / sum(table(predY, as.factor(test[, 1]))))
+  sens  <- as.numeric(xtab$byClass[1])
+  spe   <- as.numeric(xtab$byClass[2])
+  auc   <- performance(pred, "auc")@y.values[[1]]
   
   resultats <- list(table, conc, sens, spe, auc, c[3])
   return(resultats)
@@ -87,7 +89,6 @@ performances <- function(score, test) {
 #' 
 #' @importFrom caret confusionMatrix
 #'
-#' @examples
 xtab_function<-function(predY,Y){
   if (length(unique(predY)) == 1) {
     if (unique(predY) == "0") {

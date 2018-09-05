@@ -9,9 +9,7 @@
 #' @param p 
 #'
 #' @return
-#' @export
 #'
-#' @examples
 entropy <- function(p) {
   if (any(p == 1)) return(0)# -sum(p *
   -sum(p*log(p,2)) 
@@ -23,7 +21,6 @@ entropy <- function(p) {
 #'
 #' @return sum(p * (1 - p))
 #'
-#' @examples gini(p)
 gini <- function(p) {
   sum(p * (1 - p))
 }
@@ -45,7 +42,6 @@ gini <- function(p) {
 #' @return a matrix which with sampsize lines and B columns which 
 #' contains the indices of the observations belonging each boostrap sample. 
 #'
-#' @examples bsamples(ntree,data,sampsize,replace)
 bsamples<-function(ntree,data,sampsize,replace){
   N<-nrow(data)
   bsamples<-apply(matrix(rep(1:N,ntree),ncol=ntree,nrow=N),
@@ -71,7 +67,6 @@ bsamples<-function(ntree,data,sampsize,replace){
 #'
 #' @return
 #'
-#' @examples
 group.selection<-function(group,mtry=sqrt(unique(group[!is.na(group)]))){
   if(length(which(is.na(group)))>0){
     print("Warning: there are NA in group; The fucntion will ignore these NA")

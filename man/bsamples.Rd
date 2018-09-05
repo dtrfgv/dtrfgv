@@ -28,6 +28,3 @@ a sample of data "data" and a boolean "replace".
 The function draws randomly B bootstrap samples of size "sampsize"
 (the size of the sample of data)
 }
-\examples{
-bsamples(ntree,data,sampsize,replace)
-}

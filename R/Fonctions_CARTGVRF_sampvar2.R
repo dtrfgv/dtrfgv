@@ -285,10 +285,8 @@ impurity.cartgv.rf <- function(validation, tree_seq,tree) {
 #' @param tree 
 #' @param impurityacc 
 #'
-#' @return
-#' @export
+#' @return DecreaseAcc
 #'
-#' @examples
 grpimpperm.rf<-function(num_group,
                         data,
                         oobsamples,
@@ -297,7 +295,9 @@ grpimpperm.rf<-function(num_group,
                         impurityacc)
   {
   data_perm<-perm(oobsamples,data,num_group,group)
-  accperm<-1-impurity.cartgv.rf(data_perm,list(tree$tree),tree)$impurete$Misclass# accurancy=1-misclass
+  accperm<-1-impurity.cartgv.rf(data_perm,
+                                list(tree$tree),
+                                tree)$impurete$Misclass# accurancy=1-misclass
   DecreaseAcc<-impurityacc-accperm
   return(DecreaseAcc)
 }

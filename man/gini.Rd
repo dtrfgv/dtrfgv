@@ -15,6 +15,3 @@ sum(p * (1 - p))
 \description{
 Gini
 }
-\examples{
-gini(p)
-}

@@ -19,6 +19,9 @@ grpimpperm.rf(num_group, data, oobsamples, group, tree, impurityacc)
 
 \item{impurityacc}{}
 }
+\value{
+DecreaseAcc
+}
 \description{
 grpimpperm.rf
 }
