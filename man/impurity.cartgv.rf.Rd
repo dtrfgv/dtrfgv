@@ -2,7 +2,7 @@
 % Please edit documentation in R/Fonctions_CARTGVRF_sampvar2.R
 \name{impurity.cartgv.rf}
 \alias{impurity.cartgv.rf}
-\title{Title}
+\title{Elagage}
 \usage{
 impurity.cartgv.rf(validation, tree_seq, tree)
 }
@@ -14,5 +14,8 @@ impurity.cartgv.rf(validation, tree_seq, tree)
 \item{tree}{}
 }
 \description{
-Title
+calcul de l'impurete
+}
+\details{
+a partir d'un echantillon independant et d'une sequence d'arbres emboites
 }

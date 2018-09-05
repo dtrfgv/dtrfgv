@@ -2,7 +2,7 @@
 % Please edit documentation in R/Fonctions_CARTGVRF_sampvar1.R
 \name{perm}
 \alias{perm}
-\title{Title}
+\title{perm}
 \usage{
 perm(oobsamples, data, num_group, group)
 }
@@ -16,5 +16,5 @@ perm(oobsamples, data, num_group, group)
 \item{group}{}
 }
 \description{
-Title
+perm
 }

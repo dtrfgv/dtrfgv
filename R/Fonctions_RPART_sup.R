@@ -1,22 +1,29 @@
 ######## Manipulation des arbres CART (package rpart)
 
-##################################################################################################################################################################
-# Reconstruction  des arbres CART
-##################################################################################################################################################################
+as.numeric.factor <- function(x) {as.numeric(as.character(x))}
 
-#La fonction construit un data.frame qui permet de donner toutes les infos necessaire à la reconstruction de l'arbre cart construit par RPART
-### Paramètres d'entrée :
-# cart : objet rpart
-# data  : data.frame ayant servi à la construction de l'objet cart
-### Attention cette fonction n'est valide que si rpart est parametré 
-### avec control=rpart.control(maxsurrogate=0, maxcompte=0)
-#' Title
+
 #'
-#' @param cart 
-#' @param data 
+#'Reconstruction  des arbres CART
+#'
+#'La fonction construit un data.frame qui permet de donner toutes les infos necessaire à 
+#'la reconstruction de l'arbre cart construit par RPART.
+#'Attention cette fonction n'est valide que si rpart est parametré
+#'avec control=rpart.control(maxsurrogate=0, maxcompte=0)
+#'
+#' @param cart objet rpart
+#' @param data data.frame ayant servi à la construction de l'objet cart
 #'
 #' @return
-#' @export
+#' liste  : 
+#'   - tableau : un data.frame qui donne toutes les infos sur l'arbre cart
+#'      ("node_name_cart"= numero du noeud,"parent"=ancêtre,"depth"=profondeur du noeud,
+#'       "var"=variable utilisée pour couper le noeud,"threshold"=seuil de la coupure,
+#'        "n"=effectif du noeud,"pred"=label du neoud,"n_noncase"= nombre d'observation "Y=0" dans le noeuds
+#'        ,"n_case"=nombre d'individus "Y=1" dans le noeud,"prob"= P[Y=1|N], 
+#'        "sens"=sens pour la règle de coupure divisant son noeud parent: 
+#'              le sous ensembles des observations verifiant x<threshold est envoyé à gauche si "inf" à droite sinon. )
+#' 
 #' @import rpart
 #'
 #' @examples
@@ -37,22 +44,39 @@ calcul_cart <- function(cart,data) {
       sens<-rep(NA,N)
       d<-1
       while((2^d)<=max){
-        i_nodes<-which((as.numeric(as.character(node_cart))<(2^(d+1))) 
-                       & (as.numeric(as.character(node_cart))>=(2^(d))))
+        i_nodes<-which((as.numeric.factor(node_cart)<(2^(d+1))) 
+                       & (as.numeric.factor(node_cart)>=(2^(d))))
         parents<-rep(seq(2^(d-1),2^(d)-1,1),rep(2,2^(d)-(2^(d-1))))
         nodes<-seq(2^(d),2^(d+1)-1,1)
         depth[i_nodes]<-d
         parent[i_nodes]<-sapply(
-          i_nodes,function(x){parents[which(nodes==as.numeric(as.character(node_cart[x])))]})
+          i_nodes,function(x){parents[which(nodes==as.numeric.factor(node_cart[x]))]})
         d<-d+1
       }
-      tableau<-as.data.frame(cbind(node_cart,parent,depth,as.character(table$var),threshold,table$n,
-                                   as.numeric(as.character(table$yval))-1,table$yval2[,c(2,3,5)]))
-      names(tableau)<-c("node_name_cart","parent","depth","var","threshold","n","pred","n_noncase","n_case","prob")
-      tableau$threshold<-as.numeric(as.character(tableau$threshold))
-      tableau$threshold[which(tableau$var!="<leaf>")]<-as.numeric(as.character(split[,"index"]))
-      sens[which(tableau$var!="<leaf>")]<-ifelse(as.numeric(as.character(split[,"ncat"]))==-1,"inf","sup")
+      tableau<-as.data.frame(cbind(node_cart,
+                                   parent,
+                                   depth,
+                                   as.character(table$var),
+                                   threshold,table$n,
+                                   as.numeric.factor(table$yval)-1,
+                                   table$yval2[,c(2,3,5)]))
+      
+      names(tableau)<-c("node_name_cart",
+                        "parent",
+                        "depth",
+                        "var",
+                        "threshold",
+                        "n",
+                        "pred",
+                        "n_noncase",
+                        "n_case",
+                        "prob")
+      
+      tableau$threshold<-as.numeric.factor(tableau$threshold)
+      tableau$threshold[which(tableau$var!="<leaf>")]<-as.numeric.factor(split[,"index"])
+      sens[which(tableau$var!="<leaf>")]<-ifelse(as.numeric.factor(split[,"ncat"])==-1,"inf","sup")
       tableau$sens<-sens
+      
       # i_leafs<-which(tableau$var=="<leaf>")
       # for(l in 1:length(i_leafs)){
       #   i_node<-i_leafs[l]
@@ -74,51 +98,53 @@ calcul_cart <- function(cart,data) {
       
     }else{
       print("no split: the final tree is trivial")
-      tableau<-as.data.frame(cbind(1,NA,0,"<leaf>",NA,table$n,
-                                   as.numeric(as.character(table$yval))-1,table$yval2[2],table$yval2[3],table$yval2[5],NA))
+      tableau<-as.data.frame(cbind(1,
+                                   NA,
+                                   0,
+                                   "<leaf>",
+                                   NA,
+                                   table$n,
+                                   as.numeric.factor(table$yval)-1,
+                                   table$yval2[2],
+                                   table$yval2[3],
+                                   table$yval2[5],
+                                   NA))
       
-      names(tableau)<-c("node_name_cart","parent","depth","var","threshold","n","pred","n_noncase","n_case","prob","sens")
+      names(tableau)<-c("node_name_cart",
+                        "parent",
+                        "depth",
+                        "var",
+                        "threshold",
+                        "n",
+                        "pred",
+                        "n_noncase",
+                        "n_case",
+                        "prob",
+                        "sens")
     }
   }
   return(tableau)
 }
-# Valeurs retourn'ees par la fonction : 
-#==> la fonction renvoie une liste donnant : 
-###   tableau : un data.frame qui donne toutes les infos sur l'arbre cart
-###             ("node_name_cart"= numero du noeud,"parent"=ancêtre,"depth"=profondeur du noeud,
-###              "var"=variable utilisée pour couper le noeud,"threshold"=seuil de la coupure,
-###               "n"=effectif du noeud,"pred"=label du neoud,"n_noncase"= nombre d'observation "Y=0" dans le noeuds
-###               ,"n_case"=nombre d'individus "Y=1" dans le noeud,"prob"= P[Y=1|N], 
-###               "sens"=sens pour la règle de coupure divisant son noeud parent: 
-###                     le sous ensembles des observations verifiant x<threshold est envoyé à gauche si "inf" à droite sinon. )
 
-
-
-##################################################################################################################################################################
-# Prediction de la feuille
-##################################################################################################################################################################
-
-### Foncion permettant de donner le nom cart et l'indice du noeud (sortie de la fonction carts$where)
-### qui contient une nouvelle observation
-### Paramètres d'entrée:
-# new_obs : une nouvelle observation (avec les mêmes variables que celle de l'echantillonn d'apprentissage)
-# tableau : sortie de la fonction calcul_cart()
-#' Title
+#' Prediction de la feuille
+#' 
+#' Foncion permettant de donner le nom cart et l'indice du noeud (sortie de la fonction carts$where)
+#' qui contient une nouvelle observation
+#' Paramètres d'entrée:
 #'
-#' @param new_obs 
-#' @param tableau 
+#' @param new_obs une nouvelle observation (avec les memes variables que celle de l'echantillonn d'apprentissage)
+#' @param tableau sortie de la fonction calcul_cart()
 #'
 #' @return
-#' @export
 #'
 #' @examples
 pred_cart<-function(new_obs,tableau){
   i_node<-1
   while(as.character(tableau$var[i_node])!="<leaf>"){
     #print(paste("i_node:",i_node))
-    i_sons<-which(as.numeric(as.character(tableau$parent))==as.numeric(as.character(tableau$node_name_cart[i_node])))
+    i_sons<-which(as.numeric.factor(tableau$parent)==as.numeric.factor(tableau$node_name_cart[i_node]))
     #print(paste("i_sons:",i_sons))
-    if(new_obs[as.character(tableau$var[i_node])]>=as.numeric(as.character(tableau$threshold[i_node]))){
+    if(new_obs[as.character(tableau$var[i_node])]>=as.numeric.factor(tableau$threshold[i_node])){
       if(tableau$sens[i_node]=="sup"){
         i_node<-i_sons[1]
       }else{
@@ -134,15 +160,22 @@ pred_cart<-function(new_obs,tableau){
   }
   pred_node_name<-as.character(tableau$node_name_cart[i_node])
   pred_i_node<-as.numeric(as.character(i_node))
-  return(c(as.numeric(as.character(pred_node_name)),as.numeric(as.character(pred_i_node)),as.numeric(as.character(tableau$pred[i_node])),
-           as.numeric(as.character(tableau$n_noncase[i_node])),as.numeric(as.character(tableau$n_case[i_node])),as.numeric(as.character(tableau$prob[i_node]))))
+  return(c(as.numeric.factor(pred_node_name),
+           as.numeric.factor(pred_i_node),
+           as.numeric.factor(tableau$pred[i_node]),
+           as.numeric.factor(tableau$n_noncase[i_node]),
+           as.numeric.factor(tableau$n_case[i_node]),
+           as.numeric.factor(tableau$prob[i_node])))
 }
 
 
 
 
-#' Title
-#' Elagage :  calcul de l'impurete a partir d'un echantillon independant et d'une sequence d'arbres emboites
+#' Elagage 
+#' 
+#' calcul de l'impurete 
+#' 
+#' a partir d'un echantillon independant et d'une sequence d'arbres emboites
 #' La fonction prend en entree un échantillon test et une sequence d'arbres emboites
 #' Pour chaque arbre, on predit la classe de chaque observation de l'ensemble test;
 #' puis a partir de ces resultats, on calcul l'impurete de chaque arbre (gini, l'entropie et 
@@ -152,17 +185,15 @@ pred_cart<-function(new_obs,tableau){
 #' @param tree_seq 
 #'
 #' @return
-#' la fonction renvoie une liste donnant : 
-#'  impurete : une matrice contenant les differentes valeurs d'impuret'e pour chaque sous-arbres
-#'  pred = liste des predictions pour chaque sous arbres
-#'  summary_noeuds : liste contenant pour chaque sous-arbre des infos sur ses noeuds: 
-#'                    nom_noeuds = noms du noeuds
-#'                    N = nb obs dans le neoud
-#'                    N[Y=1] = nb d'obs dans le noeuds appartenant a' la class "Y=1" 
-#'                    P[Y=1] = proba pour une obs du noeuds d'appartenanir  a' la class "Y=1"
-#'                    P[Y=0] = proba pour une obs du noeuds d'appartenanir  a' la class "Y=0"
-#'                    P[hat.Y!=Y] = tx de mal class'es dans le noeud
-#' @export
+#'  - impurete : une matrice contenant les differentes valeurs d'impuret'e pour chaque sous-arbres
+#'  - pred = liste des predictions pour chaque sous arbres
+#'  - summary_noeuds : liste contenant pour chaque sous-arbre des infos sur ses noeuds: 
+#'      - nom_noeuds = noms du noeuds
+#'      - N = nb obs dans le neoud
+#'      - N[Y=1] = nb d'obs dans le noeuds appartenant a' la class "Y=1" 
+#'      - P[Y=1] = proba pour une obs du noeuds d'appartenanir  a' la class "Y=1"
+#'      - P[Y=0] = proba pour une obs du noeuds d'appartenanir  a' la class "Y=0"
+#'      - P[hat.Y!=Y] = tx de mal class'es dans le noeud
 #'
 #' @examples
 impurete_rpart <- function(validation, tree_seq) {

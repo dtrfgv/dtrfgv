@@ -2,11 +2,7 @@
 % Please edit documentation in R/Fonctions_CARTGVRF_sampvar1.R
 \name{predict.cartgv}
 \alias{predict.cartgv}
-\title{Title
-la fonction fait appel a la fonction pred_cart()
-IMPORTANT : i_noeuds (indice du noeud dans l'arbre de coupure, cad indice donne par rpart)
-et noeuds (indice du noeud dans l'arbre cartgv) utilisees comme cles primaires pour
-identifier de manière unique un noeuds}
+\title{predict.cartgv}
 \usage{
 \method{predict}{cartgv}(new, tree, carts, coups)
 }
@@ -28,7 +24,9 @@ noeuds : le numero du noeud contenant l'observation
 score : le score le l'observation
 }
 \description{
-Title
+Predict classification and regression tree for grouped variables
+}
+\details{
 la fonction fait appel a la fonction pred_cart()
 IMPORTANT : i_noeuds (indice du noeud dans l'arbre de coupure, cad indice donne par rpart)
 et noeuds (indice du noeud dans l'arbre cartgv) utilisees comme cles primaires pour

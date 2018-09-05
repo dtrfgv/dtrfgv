@@ -2,15 +2,17 @@
 % Please edit documentation in R/Fonctions_RPART_sup.R
 \name{pred_cart}
 \alias{pred_cart}
-\title{Title}
+\title{Prediction de la feuille}
 \usage{
 pred_cart(new_obs, tableau)
 }
 \arguments{
-\item{new_obs}{}
+\item{new_obs}{une nouvelle observation (avec les memes variables que celle de l'echantillonn d'apprentissage)}
 
-\item{tableau}{}
+\item{tableau}{sortie de la fonction calcul_cart()}
 }
 \description{
-Title
+Foncion permettant de donner le nom cart et l'indice du noeud (sortie de la fonction carts$where)
+qui contient une nouvelle observation
+Paramètres d'entrée:
 }

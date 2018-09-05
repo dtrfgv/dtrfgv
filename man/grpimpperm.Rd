@@ -2,7 +2,7 @@
 % Please edit documentation in R/Fonctions_CARTGVRF_sampvar1.R
 \name{grpimpperm}
 \alias{grpimpperm}
-\title{Title}
+\title{grpimpperm}
 \usage{
 grpimpperm(num_group, data, oobsamples, group, tree, impurityacc)
 }
@@ -20,5 +20,5 @@ grpimpperm(num_group, data, oobsamples, group, tree, impurityacc)
 \item{impurityacc}{}
 }
 \description{
-Title
+grpimpperm
 }

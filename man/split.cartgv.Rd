@@ -2,7 +2,7 @@
 % Please edit documentation in R/Fonctions_CARTGVRF_sampvar1.R
 \name{split.cartgv}
 \alias{split.cartgv}
-\title{Title}
+\title{split.cartgv()}
 \usage{
 \method{split}{cartgv}(node, group, igroups, label, maxdepth = 2,
   penalty = "No", sampvar = "FALSE",
@@ -27,5 +27,5 @@
 \item{mtry_var}{}
 }
 \description{
-Title
+split.cartgv()
 }

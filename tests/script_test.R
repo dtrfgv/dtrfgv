@@ -16,7 +16,7 @@ validation<-data[which(data[,1]=="validation"),-1] # except the first column.
 forest<-rfgv(train,
              group=group,
              groupImp=group,
-             ntree=10,
+             ntree=1,
              mtry_group=3,
              sampvar=TRUE,
              sampvar_type=2,

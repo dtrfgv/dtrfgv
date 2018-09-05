@@ -2,8 +2,7 @@
 % Please edit documentation in R/Fonctions_RF_evo_Modif_pierre.R
 \name{entropy}
 \alias{entropy}
-\title{Title Impurity functions
-works for the case when y has only 0 and 1 categorie...}
+\title{Impurity functions}
 \usage{
 entropy(p)
 }
@@ -11,6 +10,5 @@ entropy(p)
 \item{p}{}
 }
 \description{
-Title Impurity functions
 works for the case when y has only 0 and 1 categorie...
 }

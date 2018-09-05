@@ -2,7 +2,7 @@
 ########################           Variante de CARTGV              ########################
 ########################           avec sampvar_type=2             ########################
 ############################################################################################
-
+as.numeric.factor <- function(x) {as.numeric(as.character(x))}
 
 ### 
 #' Classification Random Tree for Grouped Variables using Random Forest.
@@ -114,11 +114,11 @@ cartgv.rf<-function(data,
         tree_split[[i]]<-tree_splits[[ind_var]]
         leaves<-which(tree_split[[i]]$tree$leave=="*")
         for(k in 1:length(leaves)){
-          i_node_coupure_2<-c(i_node_coupure_2,as.numeric(as.character(tree_split[[i]]$tree$node[leaves[k]])))
-          i_node_coupure<-c(i_node_coupure,as.numeric(as.character(tree_split[[i]]$tree$i_node_coupure[leaves[k]])))
+          i_node_coupure_2<-c(i_node_coupure_2,as.numeric.factor(tree_split[[i]]$tree$node[leaves[k]]))
+          i_node_coupure<-c(i_node_coupure,as.numeric.factor(tree_split[[i]]$tree$i_node_coupure[leaves[k]]))
           parent<-c(parent,i)
           depth<-c(depth,depth[i]+1)
-          yval<-c(yval,as.numeric(as.character(tree_split[[i]]$tree$yval[leaves[k]])))
+          yval<-c(yval,as.numeric.factor(tree_split[[i]]$tree$yval[leaves[k]]))
           pop[[length(pop)+1]]<-tree_split[[i]]$pop[[leaves[k]]]
           n<-c(n,length(unlist(tree_split[[i]]$pop[[leaves[k]]])))
         }
@@ -143,7 +143,22 @@ cartgv.rf<-function(data,
   node<-1:length(depth)
   leave<-ifelse(action<0,"*","")
   improvment<-round(improvment,4)
-  tree<-as.data.frame(cbind(action,var,depth,parent,n,n_case,n_noncase,yval,prob,leave,node,improvment,i_node_coupure,i_node_coupure_2))
+  
+  tree<-as.data.frame(cbind(action,
+                            var,
+                            depth,
+                            parent,
+                            n,
+                            n_case,
+                            n_noncase,
+                            yval,
+                            prob,
+                            leave,
+                            node,
+                            improvment,
+                            i_node_coupure,
+                            i_node_coupure_2))
+  
   rownames(groups_selec)<-paste("split",1:nrow(groups_selec),seq=" ")
   colnames(groups_selec)<-paste(1:ncol(groups_selec),"th group selected",seq=" ")
 
@@ -167,12 +182,11 @@ cartgv.rf<-function(data,
 #'
 #' @examples
 predict.cartgv.rf<-function(new,tree,tree_split){
-  f <- function(x) as.numeric(as.character(x))
   indx <- colnames(tree)
   indx <- indx[which(indx != 'leave')]
-  tree[indx] <- lapply(tree[indx], f)
+  tree[indx] <- lapply(tree[indx], as.numeric.factor)
   indx <- colnames(new)
-  new[indx]  <- lapply(new[indx],  f)
+  new[indx]  <- lapply(new[indx],  as.numeric.factor)
   
   
   P<-dim(new)[1]

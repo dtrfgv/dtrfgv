@@ -2,7 +2,7 @@
 % Please edit documentation in R/Fonctions_CARTGVRF_sampvar1.R
 \name{grpimpgini}
 \alias{grpimpgini}
-\title{Title}
+\title{grpimpgini}
 \usage{
 grpimpgini(num_group, groupselec, tree)
 }
@@ -14,5 +14,5 @@ grpimpgini(num_group, groupselec, tree)
 \item{tree}{}
 }
 \description{
-Title
+grpimpgini
 }
