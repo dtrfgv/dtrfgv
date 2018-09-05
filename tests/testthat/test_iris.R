@@ -15,8 +15,10 @@ ind0_val<-sample(ind0, floor(length(ind0) * 1/3), F)
 ind1_val<-sample(ind1, floor(length(ind1) * 1/3), F)
 validation<-data[c(ind0_val,ind1_val),]
 train<-data[setdiff(c(ind0,ind1),c(ind0_val,ind1_val)),]
-table(validation$Y);dim(validation)
-table(train$Y);dim(train)
+table(validation$Y)
+dim(validation)
+table(train$Y)
+dim(train)
 
 #maximal_tree <-Tree_PLDA(train,group=group,grp.importance=TRUE)
 #print(maximal_tree$tree)

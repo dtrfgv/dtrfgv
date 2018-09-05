@@ -4,21 +4,22 @@
 ############################################################################################
 as.numeric.factor <- function(x) {as.numeric(as.character(x))}
 
-### 
+#' cartgv.rf
+#'
 #' Classification Random Tree for Grouped Variables using Random Forest.
 #'
 #' A utiliser quand sampvar=TRUE and sampvar_type="2 ==> permet de construire un arbre 
 #' cartgv tel que dans chaque arbre de 
 #' coupure un sous-ensemble de variables est tiré au hasard avant chaque coupure
 #' 
-#' @param data 
-#' @param group 
-#' @param crit 
-#' @param case_min 
-#' @param maxdepth 
-#' @param p 
-#' @param penalty 
-#' @param mtry_var 
+#' @param data data
+#' @param group group
+#' @param crit criteria
+#' @param case_min miniaml case
+#' @param maxdepth maximum depth
+#' @param p parameter p
+#' @param penalty penalty
+#' @param mtry_var mtry variable
 #'
 #' @return list
 #' @export

@@ -196,7 +196,10 @@ rfgv<-function(data,
                       p=mtry_group,
                       penalty=penalty,
                       mtry_var=mtry_var)
-      predicted[unlist(samples$oobsamples[[b]]),b]<-as.numeric(as.character(predict_cartgv.rf(data[unlist(samples$oobsamples[[b]]),], tree$tree,tree$tree_split)$hat.Y))
+      
+      predicted[unlist(samples$oobsamples[[b]]),b]<-as.numeric.factor(predict_cartgv.rf(data[unlist(samples$oobsamples[[b]]),], 
+                                                                                        tree$tree,
+                                                                                        tree$tree_split)$hat.Y)
       
     #}else{
       #tree<-cartgv(data[unlist(samples$bsamples[,b]),],
@@ -215,25 +218,38 @@ rfgv<-function(data,
         acc<-1-as.numeric(impurity.cartgv(data[unlist(samples$oobsamples[[b]]),], 
                                           list(tree$tree),tree)$impurete$Misclass[1])
       }
-      groupselec<-unique(as.numeric(as.character(tree$tree$var[which(tree$tree$action == "1")])))
+      groupselec<-unique(as.numeric.factor(tree$tree$var[which(tree$tree$action == "1")]))
       if(sampvar==TRUE & sampvar_type=="2" & maxdepth>1){
         groupselecImp<-unique(groupImp[which(group%in%groupselec)])
         decreaacc[b,groupselecImp]<-as.numeric(unlist(sapply(groupselecImp,
-                                                          function(x)grpimpperm.rf(num_group=x,data=data,oobsamples=samples$oobsamples[[b]],
-                                                                                group=groupImp,tree=tree,impurityacc=acc))))
+                                                          function(x)grpimpperm.rf(num_group=x,
+                                                                                   data=data,
+                                                                                   oobsamples=samples$oobsamples[[b]],
+                                                                                   group=groupImp,
+                                                                                   tree=tree,
+                                                                                   impurityacc=acc))))
       }else{
         groupselecImp<-unique(groupImp[which(group%in%groupselec)])
         decreaacc[b,groupselecImp]<-as.numeric(unlist(sapply(groupselecImp,
-                                                          function(x)grpimpperm(num_group=x,data=data,oobsamples=samples$oobsamples[[b]],
-                                                                                group=groupImp,tree=tree,impurityacc=acc))))
+                                                          function(x)grpimpperm(num_group=x,
+                                                                                data=data,
+                                                                                oobsamples=samples$oobsamples[[b]],
+                                                                                group=groupImp,
+                                                                                tree=tree,
+                                                                                impurityacc=acc))))
       }
       acc<-NULL
     }
     if(!is.null(test)){
       if(sampvar==TRUE & sampvar_type=="2" & maxdepth>1){
-        test_predicted[,b]<-as.numeric(as.character(predict_cartgv.rf(test,tree$tree,tree$tree_split)$hat.Y))
+        test_predicted[,b]<-as.numeric.factor(predict_cartgv.rf(test,
+                                                                tree$tree,
+                                                                tree$tree_split)$hat.Y)
       }else{
-        test_predicted[,b]<-as.numeric(as.character(predict_cartgv(test,tree$tree,tree$carts,tree$tables_coupures)$hat.Y))
+        test_predicted[,b]<-as.numeric.factor(predict_cartgv(test,
+                                                             tree$tree,
+                                                             tree$carts,
+                                                             tree$tables_coupures)$hat.Y)
       }
       err[b]<-length(which(test_predicted[,b]!=test$Y))/length(test$Y)
       
@@ -245,7 +261,7 @@ rfgv<-function(data,
     gc()
   }
   cum.err<-apply(cbind(cumsum(err),1:ntree),1,function(x)x[1]/x[2])
-  err.rate<-rowMeans(abs(predicted-as.numeric(as.character(data$Y))),na.rm=T)
+  err.rate<-rowMeans(abs(predicted-as.numeric.factor(data$Y)),na.rm=T)
   vote[,2]<-rowMeans(predicted,na.rm=T)
   vote[,2]<-ifelse(!is.nan(vote[,2]),vote[,2],NA)
   vote[,1]<-ifelse(!is.na(vote[,2]),1-vote[,2],NA)
@@ -257,7 +273,7 @@ rfgv<-function(data,
   
   if(!is.null(test)){
     cum.err.test<-apply(cbind(cumsum(err.test),1:ntree),1,function(x)x[1]/x[2])
-    err.rate.test<-rowMeans(abs(test_predicted-as.numeric(as.character(test$Y))),na.rm=T)
+    err.rate.test<-rowMeans(abs(test_predicted-as.numeric.factor(test$Y)),na.rm=T)
     vote.test[,2]<-rowMeans(test_predicted,na.rm=T)
     vote.test[,1]<-ifelse(!is.na(vote.test[,2]),1-vote.test[,2],NA)
     vote.test<-as.data.frame(vote.test)
@@ -273,7 +289,10 @@ rfgv<-function(data,
   }
   if(grp.importance==TRUE){
     MeanDecrAcc<-colSums(decreaacc)/ntree
-    MeanDecrAccNor<-apply(cbind(MeanDecrAcc,as.numeric(table(groupImp[-1]))),1,function(x)x[1]/x[2])
+    MeanDecrAccNor<-apply(cbind(MeanDecrAcc,
+                                as.numeric(table(groupImp[-1]))),
+                          1,
+                          function(x)x[1]/x[2])
     importance<-as.data.frame(cbind(MeanDecrAcc,MeanDecrAccNor))
   }else{
     importance<-NULL
