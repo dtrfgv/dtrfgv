@@ -1,5 +1,6 @@
 rm(list=ls())
 
+devtools::load_all(pkg = ".")
 library(tplda)
 
 data(data_pour_tester_fonctions)
@@ -11,7 +12,7 @@ validation<-data[which(data[,1]=="validation"),-1] # except the first column.
 forest<-rfgv(train,
              group=group,
              groupImp=group,
-             ntree=1,
+             ntree=10,
              mtry_group=3,
              sampvar=TRUE,
              sampvar_type=2,
@@ -27,4 +28,4 @@ forest<-rfgv(train,
              crit=1,
              penalty="No")
 
-forest$importance
+print(forest$importance)
