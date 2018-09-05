@@ -1,5 +1,6 @@
 rm(list=ls())
 
+devtools::load_all(pkg = '.')
 library(tplda)
 
 data(data_pour_tester_fonctions)

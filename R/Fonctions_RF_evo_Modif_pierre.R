@@ -2,8 +2,10 @@
 ########################         Random Forests algorithm           ########################
 ############################################################################################
 
-#' Title Impurity functions
+#' Impurity functions
+#' 
 #' works for the case when y has only 0 and 1 categorie...
+#' 
 #' @param p 
 #'
 #' @return
@@ -39,7 +41,7 @@ gini <- function(p) {
 #' @param data data sample
 #' @param sampsize integer
 #' @param replace boolean
-#' @export
+#' 
 #' @return a matrix which with sampsize lines and B columns which 
 #' contains the indices of the observations belonging each boostrap sample. 
 #'

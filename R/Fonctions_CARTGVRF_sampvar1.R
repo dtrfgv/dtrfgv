@@ -1,4 +1,6 @@
 
+as.numeric.factor <- function(x) {as.numeric(as.character(x))}
+
 #' cartgv
 #' 
 #' Classification And Regression Trees for Grouped Variables
@@ -74,12 +76,12 @@ cartgv<-function(data,
   pop[[1]]<-rownames(data)
   i<-1 #indice pour le parcours des feuilles
   i_node_coupure<-NA#indice du noeud dans l'arbre cart de coupure
-  yval[1] <- ifelse((length(which(data$Y == "1")) / n[1]) < 0.5, "0", "1")
+  yval[1] <- ifelse((length(which(data$Y == 1)) / n[1]) < 0.5, 0, 1)
   while(i<=length(n)){
     node<-data[intersect(unlist(pop[[i]]),rownames(data)),]
-    prob[i]<-round((length(which(node$Y=="1"))/n[i]),4)
-    n_case[i]<-length(which(node$Y=="1"))
-    n_noncase[i]<-length(which(node$Y=="0"))
+    prob[i]<-round((length(which(node$Y==1))/n[i]),4)
+    n_case[i]<-length(which(node$Y==1))
+    n_noncase[i]<-length(which(node$Y==0))
     if ((n_case[i] > case_min) & (n_noncase[i] > case_min)) {### Critères d'arrêt (Nbr min d'observations ou feuille "pure")
       if(RF==TRUE){
         igroups<-group.selection(group[!is.na(group)],mtry=p)
@@ -140,7 +142,18 @@ cartgv<-function(data,
   node<-1:length(depth)
   leave<-ifelse(action<0,"*","")
   improvment<-round(improvment,4)
-  tree<-as.data.frame(cbind(action,var,depth,parent,n,n_case,n_noncase,yval,prob,leave,node,improvment,i_node_coupure))
+  tree<-as.data.frame(cbind(action,
+                            var,
+                            depth,
+                            parent,
+                            n,n_case,
+                            n_noncase,
+                            yval,
+                            prob,
+                            leave,
+                            node,
+                            improvment,
+                            i_node_coupure))
   if(RF==T){
     rownames(groups_selec)<-paste("split",1:nrow(groups_selec),seq=" ")
     colnames(groups_selec)<-paste(1:ncol(groups_selec),"th group selected",seq=" ")
@@ -150,16 +163,18 @@ cartgv<-function(data,
     cimportance<-NULL
     agreement<-NULL
   }
-  return(list(tree=tree,carts=carts,splits=splits,pop=pop,tables_coupures=tables_coupures,groups_selec=groups_selec,
-              importance=importance,cimportance=cimportance,agreement=agreement))
+  return(list(tree=tree,
+              carts=carts,
+              splits=splits,
+              pop=pop,
+              tables_coupures=tables_coupures,
+              groups_selec=groups_selec,
+              importance=importance,
+              cimportance=cimportance,
+              agreement=agreement))
 }
 
-# =========================================================================================
-# split.cartgv()
-# =========================================================================================
-
-
-#' Title
+#' split.cartgv()
 #'
 #' @param node 
 #' @param group 
@@ -174,8 +189,15 @@ cartgv<-function(data,
 #' @export
 #' @importFrom stats predict as.formula
 #' @examples
-split.cartgv<-function(node,group,igroups,label,maxdepth=2,penalty="No",sampvar="FALSE",
-                       mtry_var=sapply(as.numeric(table(group[!is.na(group)])),function(x)floor(sqrt(x)))){
+split.cartgv<-function(node,
+                       group,
+                       igroups,
+                       label,
+                       maxdepth=2,
+                       penalty="No",
+                       sampvar="FALSE",
+                       mtry_var=sapply(as.numeric(table(group[!is.na(group)])),function(x)floor(sqrt(x))))
+  {
   nb_group<-length(unique(group[which(group%in%igroups)]))
   Gain_Gini<-rep(0,nb_group)
   Gain_Ent<-rep(0,nb_group)
@@ -203,37 +225,45 @@ split.cartgv<-function(node,group,igroups,label,maxdepth=2,penalty="No",sampvar=
                                         maxcompete = 0 ),
                   method = "class",
                   parms = list(split = "gini"))
+    
     pred[,j]<-as.numeric(as.character(stats::predict(cart, type = "class", newdata=node)))
     carts[[j]] <- cart
     cart<-NULL
   }
+  
   for(j in 1:nb_group){
-    if(sum(pred[,j]==2,na.rm=T)>0){pred[,j]<-ifelse(pred[,j]==2,"1","0")}
+    if(sum(pred[,j]==2,na.rm=T)>0){pred[,j]<-ifelse(pred[,j]==2,1,0)}
     tab<-table(pred[,j],node$Y)
     modalities<-unique(carts[[j]]$where)
     Gain_Gini[j]<-length(node$Y)*(gini(prop.table(table(node$Y))))
     Gain_Ent[j]<-length(node$Y)*(entropy(prop.table(table(node$Y))))
     Gain_Clas[j]<-length(node$Y)*((length(which(label!=node$Y)))- length(which(pred[,j]!=node$Y)))
+    
     for(k in 1:length(modalities)){
+      
       node1<-node[which(unlist(carts[[j]]$where)==modalities[k]),]
       tab1<-table(pred[which(unlist(carts[[j]]$where)==modalities[k]),j],
                   node$Y[which(unlist(carts[[j]]$where)==modalities[k])])
       prop_n1<-dim(node1)[1]/length(node$Y)
       Gain_Gini[j]<-Gain_Gini[j]- length(node$Y)*(prop_n1*gini(prop.table(tab1[1,]))) 
       Gain_Ent[j]<-Gain_Ent[j] - length(node$Y)*(prop_n1*entropy(prop.table(tab1[1,])))
+      
     }
+    
     if(penalty=="Size"){
       group.size<-length(which(group==igroups[j]))
       Gain_Gini[j]<-Gain_Gini[j]/group.size
       Gain_Ent[j]<-Gain_Ent[j]/group.size
       Gain_Clas[j]<-Gain_Clas[j]/group.size
     }
+    
     if(penalty=="Root.size"){
       group.size<-length(which(group==igroups[j]))
       Gain_Gini[j]<-Gain_Gini[j]/sqrt(group.size)
       Gain_Ent[j]<-Gain_Ent[j]/sqrt(group.size)
       Gain_Clas[j]<-Gain_Clas[j]/sqrt(group.size)
     }
+    
     if(penalty=="Log"){
       group.size<-length(which(group==igroups[j]))
       if(group.size>1){
@@ -253,10 +283,17 @@ split.cartgv<-function(node,group,igroups,label,maxdepth=2,penalty="No",sampvar=
               var_selec=var_selec))
 }
 
-# =========================================================================================
-# perm()
-# =========================================================================================
 
+#' perm
+#'
+#' @param oobsamples 
+#' @param data 
+#' @param num_group 
+#' @param group 
+#'
+#' @return
+#'
+#' @examples
 perm<-function(oobsamples,data,num_group,group){
   data_perm<-data[oobsamples,]
   iperm<-gtools::permute(1:nrow(data_perm))
@@ -266,7 +303,7 @@ perm<-function(oobsamples,data,num_group,group){
 }
 
 
-#' Title
+#' grpimpperm
 #'
 #' @param num_group 
 #' @param data 
@@ -274,8 +311,6 @@ perm<-function(oobsamples,data,num_group,group){
 #' @param group 
 #' @param tree 
 #' @param impurityacc 
-#'
-#' @return
 #'
 #' @examples
 grpimpperm<-function(num_group,data,oobsamples,group,tree,impurityacc){
@@ -286,7 +321,7 @@ grpimpperm<-function(num_group,data,oobsamples,group,tree,impurityacc){
 }
 
 
-#' Title
+#' grpimpgini
 #'
 #' @param num_group 
 #' @param groupselec 
@@ -296,11 +331,13 @@ grpimpperm<-function(num_group,data,oobsamples,group,tree,impurityacc){
 #'
 #' @examples
 grpimpgini<-function(num_group,groupselec,tree){
+  
+  
   DecreaseImpurity<-0
   times<-which(tree$tree$var==num_group)
   if(num_group%in%groupselec){
     for(i in times ){
-      p<-unlist(as.numeric(as.character(tree$tree$n[i])))/unlist(as.numeric(as.character(tree$tree$n[1])))
+      p<-unlist(as.numeric.factor(tree$tree$n[i]))/unlist(as.numeric.factor(tree$tree$n[1]))
       DecreaseImpurity<-DecreaseImpurity+(p*unlist(tree$split[[i]]$Gain_Gini[which(tree$split[[i]]$igroups==num_group)]))
     }
   }
@@ -308,7 +345,10 @@ grpimpgini<-function(num_group,groupselec,tree){
 }
 
 
-#' Title
+#' predict.cartgv
+#' 
+#' Predict classification and regression tree for grouped variables
+#' 
 #'la fonction fait appel a la fonction pred_cart()
 #' IMPORTANT : i_noeuds (indice du noeud dans l'arbre de coupure, cad indice donne par rpart) 
 #' et noeuds (indice du noeud dans l'arbre cartgv) utilisees comme cles primaires pour 
@@ -488,19 +528,24 @@ impurity.cartgv <- function(validation, tree_seq,tree) {
   sum_noeuds <- list()
   impurete <- matrix(rep(NA, N_tree * 3), nrow = N_tree, ncol = 3)
   for (k in 1:N_tree) {
-    predictions <-as.data.frame(predict.cartgv(validation,as.data.frame(tree_seq[[k]]),tree$carts,tree$tables_coupures))
+    predictions <-as.data.frame(predict.cartgv(validation,
+                                               as.data.frame(tree_seq[[k]]),
+                                               tree$carts,
+                                               tree$tables_coupures))
+    
     predictions<-predictions[order(as.numeric(as.character(predictions$noeuds))),]
     n <- as.numeric(table(as.numeric(as.character(predictions$noeuds))))
-    n1 <- tapply(as.numeric(as.character(predictions$Y)), as.numeric(as.character(predictions$noeuds)),sum)
+    n1 <- tapply(as.numeric.factor(predictions$Y), as.numeric.factor(predictions$noeuds),sum)
     p1 <- n1 / n
     p0 <- 1 - p1
-    predictions$error.pred <-as.numeric(as.character(apply(predictions[, c("hat.Y", "Y")], 
+    predictions$error.pred <-as.numeric.factor(apply(predictions[, c("hat.Y", "Y")], 
                                                            1, 
-                                                           function(x)ifelse(x[1] != x[2], "1", "0"))))
-    misclass <-tapply(as.numeric(as.character(predictions$error.pred)), 
-                      as.numeric(as.character(predictions$noeuds)), 
+                                                           function(x)ifelse(x[1] != x[2], 1, 0)))
+    misclass <-tapply(as.numeric.factor(predictions$error.pred), 
+                      as.numeric.factor(predictions$noeuds), 
                       sum)
-    summaryNoeuds <-as.data.frame(cbind(as.numeric(as.character(names(table(as.numeric(as.character(predictions$noeuds)))))), n, n1, p1, p0, misclass))
+    summaryNoeuds <-as.data.frame(cbind(as.numeric.factor(names(table(as.numeric.factor(predictions$noeuds)))), 
+                                        n, n1, p1, p0, misclass))
     names(summaryNoeuds) <-c("nom_noeuds","N","N[Y=1]","P[Y=1]","P[Y=0]","hat.Y!=Y")
     impurete[k, 1] <- sum(apply(summaryNoeuds, 1, function(x)x[2] * gini(x[c(4, 5)]))) / N
     impurete[k, 2] <-sum(apply(summaryNoeuds, 1, function(x)x[2] * entropy(x[c(4, 5)]))) / N
