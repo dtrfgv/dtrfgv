@@ -10,7 +10,7 @@ test_that("rfgv works on data functions test", {
   forest<-rfgv(train,
                group=group,
                groupImp=group,
-               ntree=1,
+               ntree=4,
                mtry_group=3,
                sampvar=TRUE,
                sampvar_type=2,

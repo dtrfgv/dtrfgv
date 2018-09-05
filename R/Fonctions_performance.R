@@ -41,7 +41,7 @@ opt.cut = function(perf) {
 performances <- function(score, test) {
   pred <- ROCR::prediction(score, as.factor(test[, 1]))
   ## ROC curve
-  roc <- performance(pred, measure = "tpr", x.measure = "fpr")
+  roc <- ROCR::performance(pred, measure = "tpr", x.measure = "fpr")
   ## Best cut-off
   c <- opt.cut(roc)
   ##
@@ -52,17 +52,17 @@ performances <- function(score, test) {
       tab <- as.table(matrix(c(m[1, 1], m[1, 2], 0, 0), byrow = T, nrow =2))
       rownames(tab) <- c("0", "1")
       colnames(tab) <- c("0", "1")
-      xtab <- confusionMatrix(tab, positive = "1")
+      xtab <- caret::confusionMatrix(tab, positive = "1")
     } else
     {
       m <- table(predY, as.factor(test[, 1]))
       tab <- as.table(matrix(c(0, 0, m[1, 1], m[1, 2]), byrow = T, nrow =2))
       rownames(tab) <- c("0", "1")
       colnames(tab) <- c("0", "1")
-      xtab <- confusionMatrix(tab, positive = "1")
+      xtab <- caret::confusionMatrix(tab, positive = "1")
     }
   } else{
-    xtab <- confusionMatrix(table(predY, as.factor(test[, 1])), positive = "1")
+    xtab <- caret::confusionMatrix(table(predY, as.factor(test[, 1])), positive = "1")
   }
   table <- xtab$table
   conc  <- (sum(diag(table(predY, as.factor(test[, 1])))) / sum(table(predY, as.factor(test[, 1]))))
@@ -96,17 +96,17 @@ xtab_function<-function(predY,Y){
       tab <- as.table(matrix(c(m[1, 1], m[1, 2], 0, 0), byrow = T, nrow = 2))
       rownames(tab) <- c("0", "1")
       colnames(tab) <- c("0", "1")
-      xtab <- confusionMatrix(tab, positive = "1")
+      xtab <- caret::confusionMatrix(tab, positive = "1")
     } else
     {
       m <- table(predY, as.factor(Y))
       tab <- as.table(matrix(c(0, 0, m[1, 1], m[1, 2]), byrow = T, nrow = 2))
       rownames(tab) <- c("0", "1")
       colnames(tab) <- c("0", "1")
-      xtab <- confusionMatrix(tab, positive = "1")
+      xtab <- caret::confusionMatrix(tab, positive = "1")
     }
   } else{
-    xtab <- confusionMatrix(table(as.factor(predY), as.factor(Y)), positive = "1")
+    xtab <- caret::confusionMatrix(table(as.factor(predY), as.factor(Y)), positive = "1")
   }
   xtab
 }

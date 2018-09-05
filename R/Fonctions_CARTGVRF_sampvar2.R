@@ -33,36 +33,39 @@ cartgv.rf<-function(data,
                     penalty="No",
                     mtry_var=sapply(as.numeric(table(group[!is.na(group)])),function(x)floor(sqrt(x))))
   {
-  ##Initialisation
+  
   tree<-NULL
-  parent<-c()#Noeud ancetre du noeud
-  depth<-c()#Profondeur du noeuds
-  var<-c()#Groupe selectionné pour couper
-  carts<-list()#CART définissant la coupure
-  n<-c()# Effectif dans le noeud considéré
-  n_case<-c()# Effectif de Y=1 dans le noeud considéré
-  n_noncase<-c()# Effectif de Y=0 dans le noeud considéré
-  yval<-c()#Prédiction de CART = règle de prediction basée sur la classe majoritaire dans la feuille
-  prob<-c()#Proportion de Y=1 dans la feuille
-  pop<-list()#Indices des individus dans le noeuds
-  tree_split<-list()#Information sur toutes les divisions possibles du noeud
-  tables_coupures<-list()#un data.frame pour chaque coupure qui permet de detailler comment l'arbre de coupure est fait
-  improvment<-c()#Gain d'impureté dû à la coupure
-  action<-c()# 1: si on coupe; -1: quand au moins un critère d'arret rempli; -2: pas d'amelioration de l'impurete qqsoit le groupe ; -3
+  parent<-c()        # Noeud ancetre du noeud
+  depth<-c()         # Profondeur du noeuds
+  var<-c()           # Groupe selectionné pour couper
+  carts<-list()      # CART définissant la coupure
+  n<-c()             # Effectif dans le noeud considéré
+  n_case<-c()        # Effectif de Y=1 dans le noeud considéré
+  n_noncase<-c()     # Effectif de Y=0 dans le noeud considéré
+  yval<-c()          # Prédiction de CART = règle de prediction basée sur la classe majoritaire dans la feuille
+  prob<-c()          # Proportion de Y=1 dans la feuille
+  pop<-list()        # Indices des individus dans le noeuds
+  tree_split<-list() # Information sur toutes les divisions possibles du noeud
+  tables_coupures<-list() # un data.frame pour chaque coupure qui permet de detailler comment l'arbre de coupure est fait
+  improvment<-c()    # Gain d'impureté dû à la coupure
+  action<-c()        # 1: si on coupe; -1: quand au moins un critère d'arret rempli; -2: pas d'amelioration de l'impurete qqsoit le groupe ; -3
   parent[1]<-NA
   depth[1]<-0
   groups_selec<-NULL
   n[1]<-dim(data)[1]
   pop[[1]]<-rownames(data)
-  i<-1 #indice pour le parcours des feuilles
-  i_node_coupure<-NA#indice du noeud dans l'arbre cart de coupure
-  i_node_coupure_2<-NA#indice du noeud dans l'arbre cart de coupure
+  i<-1                 # indice pour le parcours des feuilles
+  i_node_coupure<-NA   # indice du noeud dans l'arbre cart de coupure
+  i_node_coupure_2<-NA # indice du noeud dans l'arbre cart de coupure
+  
   yval[1] <- ifelse((length(which(data$Y == "1")) / n[1]) < 0.5, "0", "1")
+  
   while(i<=length(n)){
     node<-data[intersect(unlist(pop[[i]]),rownames(data)),]
     prob[i]<-round((length(which(node$Y=="1"))/n[i]),4)
     n_case[i]<-length(which(node$Y=="1"))
     n_noncase[i]<-length(which(node$Y=="0"))
+    
     if(crit=="1"){
       node_impurity<-gini(prop.table(table(node$Y)))
     }else{
@@ -74,17 +77,26 @@ cartgv.rf<-function(data,
         }
       }
     }
-    if ((n_case[i] > case_min) & (n_noncase[i] > case_min)) {### Critères d'arrêt (Nbr min d'observations ou feuille "pure")
+    if ((n_case[i] > case_min) & (n_noncase[i] > case_min)) {
+      
+      ### Critères d'arrêt (Nbr min d'observations ou feuille "pure")
+      
       igroups<-group.selection(group[-1],mtry=p)
       groups_selec<-rbind(groups_selec,igroups)
       tree_splits<-list()
       improvment_splits<-rep(NA,length(igroups))
+      
       for(l in 1:length(igroups)){
+        
         tree_splits[[l]]<-cartgv_split(data=node[,c(1,which(group==igroups[l]))],
                                        group=c(NA,1:length(which(group==igroups[l]))),
-                                      crit=crit,case_min=1,maxdepth=maxdepth,
-                                      p=min(mtry_var[igroups[l]], 
-                                            length(which(group==igroups[l]))),penalty="No")
+                                       crit=crit,
+                                       case_min=1,
+                                       maxdepth=maxdepth,
+                                       p=min(mtry_var[igroups[l]], 
+                                            length(which(group==igroups[l]))),
+                                       penalty="No")
+        
         improvment_splits[l]<-length(node$Y)*(node_impurity-impurity.cartgv(node[,c(1,which(group==igroups[l]))], 
                                                                             list(tree_splits[[l]]$tree),
                                                                             tree_splits[[l]])$impurete[,crit])                       

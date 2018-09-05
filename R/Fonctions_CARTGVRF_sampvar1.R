@@ -336,13 +336,14 @@ grpimpperm<-function(num_group,data,oobsamples,group,tree,impurityacc){
 #'
 grpimpgini<-function(num_group,groupselec,tree){
   
-  
   DecreaseImpurity<-0
   times<-which(tree$tree$var==num_group)
+  n <- as.numeric.factor(tree$tree$n)
   if(num_group%in%groupselec){
     for(i in times ){
-      p<-unlist(as.numeric.factor(tree$tree$n[i]))/unlist(as.numeric.factor(tree$tree$n[1]))
-      DecreaseImpurity<-DecreaseImpurity+(p*unlist(tree$split[[i]]$Gain_Gini[which(tree$split[[i]]$igroups==num_group)]))
+      p<-unlist(n[i])/unlist(n[1])
+      DecreaseImpurity<-DecreaseImpurity
+      +(p*unlist(tree$split[[i]]$Gain_Gini[which(tree$split[[i]]$igroups==num_group)]))
     }
   }
   return(DecreaseImpurity)
@@ -420,17 +421,17 @@ predict_cartgv<-function(new,tree,carts,coups){
 }
 
 
-#' Title
+#' predict.test.cartgv
 #'
-#' @param new 
-#' @param tree 
-#' @param carts 
-#' @param coups 
+#' Version of predict.gartgv using tapply instead of for loop
+#' 
+#' @param new new tree
+#' @param tree old tree
+#' @param carts classification and regression trees
+#' @param coups coups
 #'
-#' @return
-#' la fonction renvoie une matrice donnant pour chaque 
-#' individu de new (dans l'ordre) :
-#'  - hat.Y :la classe predite
+#' @return matrix for every new item (sorted) :
+#'  - hat.Y : predicted class
 #'  - Y : la classe d'appartenance
 #'  - noeuds : le numero du noeud contenant l'observation
 #'  - score : le score le l'observation
@@ -494,8 +495,11 @@ predict.test.cartgv <- function(new, tree, carts, coups) {
 
 
 
-#' Title
-#' Elagage :  calcul de l'impuret'e a' partir d'un 'echantillon independant et d'une s'equence d'arbres emboites
+#' impurity cartgv
+#' 
+#' Elagage 
+#' 
+#' calcul de l'impuret'e a' partir d'un 'echantillon independant et d'une s'equence d'arbres emboites
 #' WARNING : fonction corrigée le 19 janvier2018 car il y avait un problème d'ordre pour les noeuds dans les apply
 #' La fonction prend en entrée un échantillon test et une séquence d'arbres emboités
 #' Pour chaque arbre, on prédit la classe de chaque observation de l'ensemble test;
@@ -531,28 +535,39 @@ impurity.cartgv <- function(validation, tree_seq,tree) {
                                                tree$carts,
                                                tree$tables_coupures))
     
-    predictions<-predictions[order(as.numeric(as.character(predictions$noeuds))),]
-    n <- as.numeric(table(as.numeric(as.character(predictions$noeuds))))
-    n1 <- tapply(as.numeric.factor(predictions$Y), as.numeric.factor(predictions$noeuds),sum)
+    predictions$noeuds  <- as.numeric.factor(predictions$noeuds)
+    predictions$Y       <- as.numeric.factor(predictions$Y)
+    
+    predictions<-predictions[order(predictions$noeuds),]
+    n <- as.numeric(table(predictions$noeuds))
+    n1 <- tapply(predictions$Y, predictions$noeuds,sum)
     p1 <- n1 / n
     p0 <- 1 - p1
     predictions$error.pred <-as.numeric.factor(apply(predictions[, c("hat.Y", "Y")], 
                                                            1, 
                                                            function(x)ifelse(x[1] != x[2], 1, 0)))
-    misclass <-tapply(as.numeric.factor(predictions$error.pred), 
-                      as.numeric.factor(predictions$noeuds), 
+    misclass <-tapply(predictions$error.pred, 
+                      predictions$noeuds, 
                       sum)
-    summaryNoeuds <-as.data.frame(cbind(as.numeric.factor(names(table(as.numeric.factor(predictions$noeuds)))), 
+    
+    summaryNoeuds <-as.data.frame(cbind(as.numeric.factor(names(table(predictions$noeuds))), 
                                         n, n1, p1, p0, misclass))
+    
     names(summaryNoeuds) <-c("nom_noeuds","N","N[Y=1]","P[Y=1]","P[Y=0]","hat.Y!=Y")
+    
     impurete[k, 1] <- sum(apply(summaryNoeuds, 1, function(x)x[2] * gini(x[c(4, 5)]))) / N
     impurete[k, 2] <-sum(apply(summaryNoeuds, 1, function(x)x[2] * entropy(x[c(4, 5)]))) / N
     impurete[k, 3] <-sum(summaryNoeuds[, 6]) / (N)
+    
     impurete<-as.data.frame(impurete)
+    
     names(impurete)<-c("Gini","Information","Misclass")
     pred[[k]]<-predictions
     sum_noeuds<-summaryNoeuds
   }
-  list(impurete = impurete,pred = pred,summary_noeuds = sum_noeuds)
+  
+  list(impurete = impurete,
+       pred = pred,
+       summary_noeuds = sum_noeuds)
 }
 
