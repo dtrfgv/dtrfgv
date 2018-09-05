@@ -331,6 +331,14 @@ grpimpgini<-function(num_group,groupselec,tree){
 #'
 #' @examples
 predict.cartgv<-function(new,tree,carts,coups){
+  
+  f <- function(x) as.numeric(as.character(x))
+  indx <- colnames(tree)
+  indx <- indx[which(indx != 'leave')]
+  tree[indx] <- lapply(tree[indx], f)
+  indx <- colnames(new)
+  new[indx]  <- lapply(new[indx],  f)
+  
   P<-dim(new)[1]
   pred<-rep(NA,P)
   noeuds <- rep(NA, P)
@@ -339,34 +347,34 @@ predict.cartgv<-function(new,tree,carts,coups){
   for(p in 1:P){
     ind<-new[p,]
     i<-1
-    while(as.numeric(as.character(tree$action[which(as.numeric(as.character(tree$node))==i)]))>=1){
+    while(tree$action[which(tree$node==i)]>=1){
       temp<-as.data.frame(t(pred_cart(ind,coups[[i]])[c(2,3,4,5)]))
       names(temp)<-c("i_node_coupure","pred","n_noncase","n_case")
-      i<-as.numeric(as.character(tree$node[which(as.numeric(as.character(tree$parent))==i
-                                                 & as.numeric(as.character(tree$yval))==(as.numeric(as.character(temp$pred)))
-                                                 & as.numeric(as.character(tree$n_case))==as.numeric(as.character(temp$n_case))
-                                                 & as.numeric(as.character(tree$n_noncase))==as.numeric(as.character(temp$n_noncase))
-                                                 & as.numeric(as.character(tree$i_node_coupure))== as.numeric(as.character(temp$i_node_coupure)))]))
+      i<-tree$node[which(tree$parent==i
+                        & tree$yval==temp$pred
+                        & tree$n_case==temp$n_case
+                        & tree$n_noncase==temp$n_noncase
+                        & tree$i_node_coupure== temp$i_node_coupure)]
     }
-    if(as.numeric(as.character(tree$action[which(as.numeric(as.character(tree$node))==i)]))<1){
+    if(tree$action[which(tree$node==i)]<1){
       #on teste si le noeuds dans lequel tombre l'obs est une feuille 
-      pred[p]<-as.numeric(as.character(tree$yval[which(as.numeric(as.character(tree$node))==i)]))
+      pred[p]<-tree$yval[which(tree$node==i)]
       noeuds[p] <- i
-      i_noeuds[p]<-as.numeric(as.character(tree$i_node_coupure[which(as.numeric(as.character(tree$node))==i)]))
-      score[p]<- as.numeric(as.character(tree$prob[which(as.numeric(as.character(tree$node))==i)]))
+      i_noeuds[p]<-tree$i_node_coupure[which(tree$node==i)]
+      score[p]<- tree$prob[which(tree$node==i)]
       i<-1
     }
   }
   
-  res<-as.data.frame(cbind(Y=as.numeric(as.character(new$Y)),
-                           hat.Y=as.numeric(as.character(pred)),
+  res<-as.data.frame(cbind(Y=new$Y,
+                           hat.Y=pred,
                            noeuds=as.character(noeuds),
-                           score=as.numeric(as.character(score)),
-                           i_noeuds=as.numeric(as.character(i_noeuds))))
+                           score=score,
+                           i_noeuds=i_noeuds))
   
   names(res)<-c("Y","hat.Y","noeuds","score","i_noeuds")
-  if("2"%in%res$Y){res$Y<-ifelse(res$Y=="2","1","0")}
-  if("2"%in%res$hat.Y){res$hat.Y<-ifelse(res$hat.Y=="2","1","0")}
+  if(2%in%res$Y){res$Y<-ifelse(res$Y==2,1,0)}
+  if(2%in%res$hat.Y){res$hat.Y<-ifelse(res$hat.Y==2,1,0)}
   return(res)
 }
 

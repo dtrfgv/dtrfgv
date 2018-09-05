@@ -173,8 +173,7 @@ predict.cartgv.rf<-function(new,tree,tree_split){
   tree[indx] <- lapply(tree[indx], f)
   indx <- colnames(new)
   new[indx]  <- lapply(new[indx],  f)
-  indx <- colnames(test)
-  test[indx] <- lapply(test[indx], f)
+  
   
   P<-dim(new)[1]
   pred<-rep(NA,P)
@@ -212,18 +211,20 @@ predict.cartgv.rf<-function(new,tree,tree_split){
                            i_noeuds=i_noeuds))
   
   names(res)<-c("Y","hat.Y","noeuds","score","i_noeuds")
-  if("2"%in%res$Y){res$Y<-ifelse(res$Y=="2","1","0")}
-  if("2"%in%res$hat.Y){res$hat.Y<-ifelse(res$hat.Y=="2","1","0")}
+  if(2%in%res$Y){res$Y<-ifelse(res$Y==2,1,0)}
+  if(2%in%res$hat.Y){res$hat.Y<-ifelse(res$hat.Y==2,1,0)}
   return(res)
 }
 
 
-##################################################################################################################################################################
-# Elagage :  calcul de l'impuret'e a' partir d'un 'echantillon independant et d'une s'equence d'arbres emboites
-##################################################################################################################################################################
 
 
-#' Title
+
+#' Elagage 
+#' 
+#' calcul de l'impurete 
+#' 
+#' a partir d'un echantillon independant et d'une sequence d'arbres emboites
 #'
 #' @param validation 
 #' @param tree_seq 
