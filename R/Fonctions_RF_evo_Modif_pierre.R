@@ -211,7 +211,7 @@ rfgv<-function(data,
       #group,crit=crit,case_min=case_min,maxdepth=maxdepth,
       #            p=mtry_group,RF=T, IMPORTANCE=FALSE,
       #penalty=penalty,sampvar=sampvar,mtry_var=mtry_var)
-      #predicted[unlist(samples$oobsamples[[b]]),b]<-as.numeric(as.character(predict_cartgv(data[unlist(samples$oobsamples[[b]]),], tree$tree,tree$carts,tree$tables_coupures)$hat.Y))
+      #predicted[unlist(samples$oobsamples[[b]]),b]<-as.numeric.factor(predict_cartgv(data[unlist(samples$oobsamples[[b]]),], tree$tree,tree$carts,tree$tables_coupures)$hat.Y)
       
     #}
     err[b]<-length(which(predicted[unlist(samples$oobsamples[[b]]),b]!=data$Y[unlist(samples$oobsamples[[b]])]))/length(data$Y[unlist(samples$oobsamples[[b]])])

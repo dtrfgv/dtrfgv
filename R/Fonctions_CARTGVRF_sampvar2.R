@@ -251,9 +251,9 @@ predict_cartgv.rf<-function(new,tree,tree_split){
 #' 
 #' a partir d'un echantillon independant et d'une sequence d'arbres emboites
 #'
-#' @param validation 
-#' @param tree_seq 
-#' @param tree 
+#' @param validation validation data
+#' @param tree_seq tree sequence
+#' @param tree tree data
 #'
 #' @return list
 #' @export
@@ -266,14 +266,20 @@ impurity.cartgv.rf <- function(validation, tree_seq,tree) {
   impurete <- matrix(rep(NA, N_tree * 3), nrow = N_tree, ncol = 3)
   for (k in 1:N_tree) {
     predictions <-as.data.frame(predict_cartgv.rf(validation,as.data.frame(tree_seq[[k]]),tree$tree_split))
-    predictions<-predictions[order(as.numeric(as.character(predictions$noeuds))),]
-    n <- as.numeric(table(as.numeric(as.character(predictions$noeuds))))
-    n1 <- tapply(as.numeric(as.character(predictions$Y)), as.numeric(as.character(predictions$noeuds)),sum)
+    predictions<-predictions[order(as.numeric.factor(predictions$noeuds)),]
+    n <- as.numeric(table(as.numeric.factor(predictions$noeuds)))
+    n1 <- tapply(as.numeric.factor(predictions$Y), as.numeric.factor(predictions$noeuds),sum)
     p1 <- n1 / n
     p0 <- 1 - p1
-    predictions$error.pred <-as.numeric(as.character(apply(predictions[, c("hat.Y", "Y")], 1, function(x)ifelse(x[1] != x[2], "1", "0"))))
-    misclass <-tapply(as.numeric(as.character(predictions$error.pred)), as.numeric(as.character(predictions$noeuds)), sum)
-    summaryNoeuds <-as.data.frame(cbind(as.numeric(as.character(names(table(as.numeric(as.character(predictions$noeuds)))))), n, n1, p1, p0, misclass))
+    predictions$error.pred <-as.numeric.factor(apply(predictions[, c("hat.Y", "Y")],
+                                                     1, function(x)ifelse(x[1] != x[2], "1", "0")))
+    
+    misclass <-tapply(as.numeric.factor(predictions$error.pred),
+                      as.numeric.factor(predictions$noeuds), sum)
+    
+    summaryNoeuds <-as.data.frame(cbind(as.numeric.factor(names(table(as.numeric.factor(predictions$noeuds)))), 
+                                        n, n1, p1, p0, misclass))
+    
     names(summaryNoeuds) <-c("nom_noeuds","N","N[Y=1]","P[Y=1]","P[Y=0]","P[hat.Y!=Y]")
     impurete[k, 1] <- sum(apply(summaryNoeuds, 1, function(x)x[2] * gini(x[c(4, 5)]))) / N
     impurete[k, 2] <-sum(apply(summaryNoeuds, 1, function(x)x[2] * entropy(x[c(4, 5)]))) / N
@@ -288,12 +294,12 @@ impurity.cartgv.rf <- function(validation, tree_seq,tree) {
 
 #' grpimpperm.rf
 #'
-#' @param num_group 
-#' @param data 
-#' @param oobsamples 
-#' @param group 
-#' @param tree 
-#' @param impurityacc 
+#' @param num_group group number
+#' @param data input data
+#' @param oobsamples out of bag samples
+#' @param group group id
+#' @param tree tree data
+#' @param impurityacc impurity cumsum
 #'
 #' @return DecreaseAcc
 #'
@@ -313,7 +319,9 @@ grpimpperm.rf<-function(num_group,
 }
 
 
-#' cartgv_split()
+#' cartgv_split
+#' 
+#' Split classification and regression tree
 #'
 #' Utilisé quand sampvar=TRUE et sampvar_type="2" et maxdepth>1 
 #' ==> dans l'arbre de coupure avant chaque coupure on tire un sous ensemble de variable
@@ -389,7 +397,7 @@ cartgv_split<-function(data,group,crit=1,case_min=1,maxdepth=2,p=floor(sqrt(leng
         #si oui, on choisit celui qui maximise la decroissance d'impurete
         carts[[i]]<-splits[[i]]$carts[[ind_var]]
         tables_coupures[[i]]<-calcul_cart(carts[[i]],node)
-        modalities<-unique(as.numeric(as.character(carts[[i]]$where)))
+        modalities<-unique(as.numeric.factor(carts[[i]]$where))
         for(k in 1:length(modalities)){
           i_node_coupure<-c(i_node_coupure,modalities[k])
           node_son<-node[which(unlist(carts[[i]]$where)==modalities[k]),]

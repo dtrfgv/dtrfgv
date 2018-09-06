@@ -37,15 +37,15 @@ calcul_cart <- function(cart,data) {
     if(dim(table)[1]>1){
       N<-dim(table)[1]
       node_cart<-rownames(table)
-      max<-max(as.numeric(as.character(node_cart)))
+      max<-max(as.numeric.factor(node_cart)))
       depth<-c(0,rep(NA,N-1))
       parent<-rep(NA,N)
       threshold<-rep(NA,N)
       sens<-rep(NA,N)
       d<-1
       while((2^d)<=max){
-        i_nodes<-which((as.numeric.factor(node_cart)<(2^(d+1))) 
-                       & (as.numeric.factor(node_cart)>=(2^(d))))
+        i_nodes<-which(  (as.numeric.factor(node_cart) <  2^(d+1)) 
+                       & (as.numeric.factor(node_cart) >= 2^(d) ))
         parents<-rep(seq(2^(d-1),2^(d)-1,1),rep(2,2^(d)-(2^(d-1))))
         nodes<-seq(2^(d),2^(d+1)-1,1)
         depth[i_nodes]<-d
@@ -82,10 +82,10 @@ calcul_cart <- function(cart,data) {
       #   i_node<-i_leafs[l]
       #   ind<-data[which(cart$where==i_node),]#cart$where donne l'indice de la feuille et non le nom du noeud
       #   while(!is.na(tableau$parent[i_node])){
-      #     i_parent<-which(as.numeric(as.character(tableau$node_name_cart))==
-      #                       as.numeric(as.character(tableau$parent[i_node])))
+      #     i_parent<-which(as.numeric.factor(tableau$node_name_cart)==
+      #                       as.numeric.factor(tableau$parent[i_node]))
       #     if(mean(ind[,as.character(tableau$var[i_parent])])>=
-      #        as.numeric(as.character(tableau$threshold[i_parent]))){
+      #        as.numeric.factor(tableau$threshold[i_parent])){
       #       sens[i_node]<-"sup"
       #     }else{
       #       sens[i_node]<-"inf"
@@ -158,7 +158,7 @@ pred_cart<-function(new_obs,tableau){
     }
   }
   pred_node_name<-as.character(tableau$node_name_cart[i_node])
-  pred_i_node<-as.numeric(as.character(i_node))
+  pred_i_node<-as.numeric.factor(i_node)
   return(c(as.numeric.factor(pred_node_name),
            as.numeric.factor(pred_i_node),
            as.numeric.factor(tableau$pred[i_node]),
@@ -180,8 +180,8 @@ pred_cart<-function(new_obs,tableau){
 #' puis a partir de ces resultats, on calcul l'impurete de chaque arbre (gini, l'entropie et 
 #' le taux de mal-classes sont calcules)
 #'
-#' @param validation 
-#' @param tree_seq 
+#' @param validation validation data
+#' @param tree_seq tree sequence
 #'
 #' @return
 #'  - impurete : une matrice contenant les differentes valeurs d'impuret'e pour chaque sous-arbres
@@ -199,6 +199,9 @@ impurete_rpart <- function(validation, tree_seq) {
   N <- dim(validation)[1]
   pred <- list()
   sum_noeuds <- list()
+  
+  validation$Y <- as.numeric.factor(validation$Y)
+  
   impurete <- matrix(rep(NA, N_tree * 3), nrow = N_tree, ncol = 3)
   for (k in 1:N_tree) {
     p <- stats::predict(tree_seq[[k]], type = "matrix", validation)
@@ -209,7 +212,8 @@ impurete_rpart <- function(validation, tree_seq) {
                                                                  &(tree_seq[[k]]$frame$yval2[, 4] == x[4]) 
                                                                  &(tree_seq[[k]]$frame$yval2[, 5] == x[5]) 
                                                                  &(tree_seq[[k]]$frame$yval==x[1]))[1], ]))
-    predictions <-as.data.frame(cbind(p[, 1] - 1, as.numeric(as.character(validation$Y)), noeuds))
+    
+    predictions <-as.data.frame(cbind(p[, 1] - 1, validation$Y, noeuds))
     names(predictions) <- c("hat.Y", "Y", "noeuds")
     n <- as.numeric(table(as.numeric.factor(predictions$noeuds)))
     n1 <- tapply(as.numeric.factor(predictions$Y), 
@@ -219,8 +223,8 @@ impurete_rpart <- function(validation, tree_seq) {
     predictions$error.pred <-as.numeric.factor(apply(predictions[, c("hat.Y", "Y")], 
                                                            1, 
                                                            function(x)ifelse(x[1] != x[2], "1", "0")))
-    misclass <-tapply(as.numeric(as.character(predictions$error.pred)), 
-                      as.numeric(as.character(predictions$noeuds)), sum)
+    misclass <-tapply(as.numeric.factor(predictions$error.pred), 
+                      as.numeric.factor(predictions$noeuds), sum)
     summaryNoeuds <-as.data.frame(cbind(as.numeric.factor(names(table(as.numeric.factor(predictions$noeuds)))), 
                                         n, n1, p1, p0, misclass))
     names(summaryNoeuds) <-c("nom_noeuds","N","N[Y=1]","P[Y=1]","P[Y=0]","P[hat.Y!=Y]")

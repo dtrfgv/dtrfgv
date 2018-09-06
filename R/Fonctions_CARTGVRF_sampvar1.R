@@ -119,7 +119,7 @@ cartgv<-function(data,
         var[i] <- igroups[ind_var]#si oui, on choisit celui qui maximise la decroissance d'impurete
         carts[[i]]<-splits[[i]]$carts[[ind_var]]
         tables_coupures[[i]]<-calcul_cart(carts[[i]],node)
-        modalities<-unique(as.numeric(as.character(carts[[i]]$where)))
+        modalities<-unique(as.numeric.factor(carts[[i]]$where))
         for(k in 1:length(modalities)){
           i_node_coupure<-c(i_node_coupure,modalities[k])
           node_son<-node[which(unlist(carts[[i]]$where)==modalities[k]),]
@@ -233,7 +233,7 @@ split_cartgv<-function(node,
                   method = "class",
                   parms = list(split = "gini"))
     
-    pred[,j]<-as.numeric(as.character(stats::predict(cart, type = "class", newdata=node)))
+    pred[,j]<-as.numeric.factor(stats::predict(cart, type = "class", newdata=node))
     carts[[j]] <- cart
     cart<-NULL
   }
@@ -365,21 +365,20 @@ grpimpgini<-function(num_group,groupselec,tree){
 #' @param coups cuts
 #'
 #' @return la fonction renvoie une matrice donnant pour chaque individu de new (dans l'ordre) : 
-#'  hat.Y :la classe predite
-#'  Y : la classe d'appartenance
-#'  noeuds : le numero du noeud contenant l'observation
-#'  score : le score le l'observation
+#'  - hat.Y :la classe predite
+#'  - Y : la classe d'appartenance
+#'  - noeuds : le numero du noeud contenant l'observation
+#'  - score : le score le l'observation
 
 #' @export
 #'
 predict_cartgv<-function(new,tree,carts,coups){
   
-  f <- function(x) as.numeric(as.character(x))
   indx <- colnames(tree)
   indx <- indx[which(indx != 'leave')]
-  tree[indx] <- lapply(tree[indx], f)
+  tree[indx] <- lapply(tree[indx], as.numeric.factor)
   indx <- colnames(new)
-  new[indx]  <- lapply(new[indx],  f)
+  new[indx]  <- lapply(new[indx],  as.numeric.factor)
   
   P<-dim(new)[1]
   pred<-rep(NA,P)
@@ -509,7 +508,7 @@ predict.test.cartgv <- function(new, tree, carts, coups) {
 #'
 #' @param validation data.frame contenant les mêmes variables que le jeux de données utilisés pour construire l'objet tree
 #' @param tree_seq objet retourné par la fonction Tree_CART_bin() ou Tree_CART()
-#' @param tree 
+#' @param tree tree data
 #'
 #' @return List : 
 #'   impurete : une matrice contenant les differentes valeurs d'impuret'e pour chaque sous-arbres

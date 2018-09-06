@@ -4,7 +4,7 @@
 #' 
 #' Trouver le seuil qui permet le meilleur compromis sensibilite-specificite
 #'
-#' @param perf 
+#' @param perf performance data
 #'
 #' @return NULL
 #'
