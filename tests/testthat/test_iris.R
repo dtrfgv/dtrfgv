@@ -2,7 +2,7 @@ context("rfblog")
 
 test_that("rf works on iris dataset", {
 
-data(iris)
+data("iris")
 names(iris)
 table(iris$Species)
 data<-iris[,c(5,1:4)]

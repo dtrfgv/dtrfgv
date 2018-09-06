@@ -126,7 +126,9 @@ group.selection<-function(group,
 #' @export
 #'
 #' @examples
-#' data(data_pour_tester_fonctions)
+#' data(rfgv_dataset)
+#' data(group)
+#' data <- rfgv_dataset
 #' train<-data[which(data[,1]=="train"),-1]           # negative index into the `data` 
 #' test<-data[which(data[,1]=="test"),-1]             # object specifying all rows and all columns 
 #' validation<-data[which(data[,1]=="validation"),-1] # except the first column.
