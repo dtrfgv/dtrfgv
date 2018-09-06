@@ -7,11 +7,11 @@
 impurity.cartgv.rf(validation, tree_seq, tree)
 }
 \arguments{
-\item{validation}{}
+\item{validation}{validation data}
 
-\item{tree_seq}{}
+\item{tree_seq}{tree sequence}
 
-\item{tree}{}
+\item{tree}{tree data}
 }
 \value{
 list

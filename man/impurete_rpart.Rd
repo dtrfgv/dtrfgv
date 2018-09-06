@@ -7,9 +7,9 @@
 impurete_rpart(validation, tree_seq)
 }
 \arguments{
-\item{validation}{}
+\item{validation}{validation data}
 
-\item{tree_seq}{}
+\item{tree_seq}{tree sequence}
 }
 \value{
 \itemize{

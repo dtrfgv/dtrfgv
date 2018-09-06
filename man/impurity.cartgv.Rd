@@ -11,7 +11,7 @@ impurity.cartgv(validation, tree_seq, tree)
 
 \item{tree_seq}{objet retourné par la fonction Tree_CART_bin() ou Tree_CART()}
 
-\item{tree}{}
+\item{tree}{tree data}
 }
 \value{
 List :

@@ -17,10 +17,12 @@ predict_cartgv(new, tree, carts, coups)
 }
 \value{
 la fonction renvoie une matrice donnant pour chaque individu de new (dans l'ordre) :
-hat.Y :la classe predite
-Y : la classe d'appartenance
-noeuds : le numero du noeud contenant l'observation
-score : le score le l'observation
+\itemize{
+\item hat.Y :la classe predite
+\item Y : la classe d'appartenance
+\item noeuds : le numero du noeud contenant l'observation
+\item score : le score le l'observation
+}
 }
 \description{
 Predict classification and regression tree for grouped variables

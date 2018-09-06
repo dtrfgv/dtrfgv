@@ -7,7 +7,7 @@
 opt.cut(perf)
 }
 \arguments{
-\item{perf}{}
+\item{perf}{performance data}
 }
 \description{
 Optimal cut

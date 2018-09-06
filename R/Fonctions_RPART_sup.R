@@ -37,7 +37,7 @@ calcul_cart <- function(cart,data) {
     if(dim(table)[1]>1){
       N<-dim(table)[1]
       node_cart<-rownames(table)
-      max<-max(as.numeric.factor(node_cart)))
+      max<-max(as.numeric.factor(node_cart))
       depth<-c(0,rep(NA,N-1))
       parent<-rep(NA,N)
       threshold<-rep(NA,N)

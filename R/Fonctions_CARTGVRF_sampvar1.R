@@ -380,117 +380,44 @@ predict_cartgv<-function(new,tree,carts,coups){
   indx <- colnames(new)
   new[indx]  <- lapply(new[indx],  as.numeric.factor)
   
-  P<-dim(new)[1]
-  pred<-rep(NA,P)
-  noeuds <- rep(NA, P)
-  i_noeuds <- rep(NA, P)
-  score <- rep(NA, P)
-  for(p in 1:P){
-    ind<-new[p,]
+  predgv <- function( ind ) {
     i<-1
     while(tree$action[which(tree$node==i)]>=1){
       temp<-as.data.frame(t(pred_cart(ind,coups[[i]])[c(2,3,4,5)]))
       names(temp)<-c("i_node_coupure","pred","n_noncase","n_case")
-      i<-tree$node[which(tree$parent==i
-                        & tree$yval==temp$pred
-                        & tree$n_case==temp$n_case
-                        & tree$n_noncase==temp$n_noncase
-                        & tree$i_node_coupure== temp$i_node_coupure)]
+      i<-tree$node[which( tree$parent==i
+                          & tree$yval==temp$pred
+                          & tree$n_case==temp$n_case
+                          & tree$n_noncase==temp$n_noncase
+                          & tree$i_node_coupure== temp$i_node_coupure)]
     }
     if(tree$action[which(tree$node==i)]<1){
       #on teste si le noeuds dans lequel tombre l'obs est une feuille 
-      pred[p]<-tree$yval[which(tree$node==i)]
-      noeuds[p] <- i
-      i_noeuds[p]<-tree$i_node_coupure[which(tree$node==i)]
-      score[p]<- tree$prob[which(tree$node==i)]
+      return (c(tree$yval[which(tree$node==i)],            # pred (hat.Y)
+               as.character(i),                            # noeuds
+               tree$prob[which(tree$node==i)],             # score
+               tree$i_node_coupure[which(tree$node==i)]))  # i_noeuds
+      
       i<-1
-    }
-  }
-  
-  res<-as.data.frame(cbind(Y=new$Y,
-                           hat.Y=pred,
-                           noeuds=as.character(noeuds),
-                           score=score,
-                           i_noeuds=i_noeuds))
-  
-  names(res)<-c("Y","hat.Y","noeuds","score","i_noeuds")
-  if(2%in%res$Y){res$Y<-ifelse(res$Y==2,1,0)}
-  if(2%in%res$hat.Y){res$hat.Y<-ifelse(res$hat.Y==2,1,0)}
-  return(res)
-}
-
-
-#' predict.test.cartgv
-#'
-#' Version of predict.gartgv using tapply instead of for loop
-#' 
-#' @param new new tree
-#' @param tree old tree
-#' @param carts classification and regression trees
-#' @param coups coups
-#'
-#' @return matrix for every new item (sorted) :
-#'  - hat.Y : predicted class
-#'  - Y : la classe d'appartenance
-#'  - noeuds : le numero du noeud contenant l'observation
-#'  - score : le score le l'observation
-#'
-predict.test.cartgv <- function(new, tree, carts, coups) {
-  P <- dim(new)[1]
-  
-  predgv <- function(ind) {
-    i <- 1
-    while (tree$action[which(tree$node == i)] >= 1) {
-      tab <- coups[[i]]
-      if (is.data.frame(tab)) {
-        i_node <- 1
-        while (tab$var[i_node] != "<leaf>") {
-          i_sons <- which(tab$parent == tab$node_name_cart[i_node])
-          if (ind[tab$var[i_node]] >= tab$threshold[i_node]) {
-            if (tab$sens[i_node] == "sup")
-              k <- 1
-            else
-              k <- 2
-          } else{
-            if (tab$sens[i_node] == "sup")
-              k <- 2
-            else
-              k <- 1
-          }
-          i_node <- i_sons[k]
-        }
-        
-        i <-  tree$node[which(
-          tree$parent == i
-          & tree$i_node_coupure == i_node
-          & tree$yval == tab$pred[i_node]
-          & tree$n_noncase == tab$n_noncase[i_node]
-          & tree$n_case == tab$n_case[i_node]
-        )]
-      }
-    }
-    i.eq.tree.node <- which(tree$node == i)
-    if (tree$action[i.eq.tree.node] < 1) {
-      # on teste si le noeuds dans lequel tombre l'obs
-      # est une feuille
-      return(c(tree$yval[i.eq.tree.node], i, tree$prob[i.eq.tree.node]))
     } else {
-      return(c(NA, NA, NA))
-    }
-    
+      return(c(NA,NA,NA,NA))
   }
+  }
+  
+  P<-dim(new)[1]
   
   res <- matrix()
-  length(res) <- 4 * P
-  dim(res) <- c(P, 4)
-  
+  length(res) <- 5 * P
+  dim(res) <- c(P, 5)
   res[,1] <- new[,1]
-  res[,2:4] <- t(apply(new,1,predgv))
+  res[,2:5] <- t(apply(new,1,predgv))
   
-  colnames(res) <- c("Y", "hat.Y", "noeuds", "score")
-  
+  colnames(res)<-c("Y","hat.Y","noeuds","score","i_noeuds")
+  if (2 %in% res[,1]) {res[,1] <- ifelse(res[,1]==2,1,0)}
+  if (2 %in% res[,2]) {res[,2] <- ifelse(res[,2]==2,1,0)}
   return(as.data.frame(res))
 }
+
 
 
 

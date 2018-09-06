@@ -7,17 +7,17 @@
 grpimpperm.rf(num_group, data, oobsamples, group, tree, impurityacc)
 }
 \arguments{
-\item{num_group}{}
+\item{num_group}{group number}
 
-\item{data}{}
+\item{data}{input data}
 
-\item{oobsamples}{}
+\item{oobsamples}{out of bag samples}
 
-\item{group}{}
+\item{group}{group id}
 
-\item{tree}{}
+\item{tree}{tree data}
 
-\item{impurityacc}{}
+\item{impurityacc}{impurity cumsum}
 }
 \value{
 DecreaseAcc
