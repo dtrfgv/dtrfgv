@@ -7,9 +7,9 @@
 performances(score, test)
 }
 \arguments{
-\item{score}{}
+\item{score}{score}
 
-\item{test}{}
+\item{test}{test}
 }
 \value{
 resultats

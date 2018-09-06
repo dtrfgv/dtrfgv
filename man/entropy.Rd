@@ -7,7 +7,7 @@
 entropy(p)
 }
 \arguments{
-\item{p}{}
+\item{p}{probability}
 }
 \value{
 entropy

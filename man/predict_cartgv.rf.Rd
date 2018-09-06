@@ -7,11 +7,11 @@
 predict_cartgv.rf(new, tree, tree_split)
 }
 \arguments{
-\item{new}{}
+\item{new}{data}
 
-\item{tree}{}
+\item{tree}{data}
 
-\item{tree_split}{}
+\item{tree_split}{data}
 }
 \value{
 res

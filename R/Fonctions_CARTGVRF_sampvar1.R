@@ -293,10 +293,10 @@ split_cartgv<-function(node,
 
 #' perm
 #'
-#' @param oobsamples 
-#' @param data 
-#' @param num_group 
-#' @param group 
+#' @param oobsamples out of bag samples
+#' @param data data
+#' @param num_group group number
+#' @param group group
 #'
 #' @return data_perm
 #'
@@ -311,12 +311,12 @@ perm<-function(oobsamples,data,num_group,group){
 
 #' grpimpperm
 #'
-#' @param num_group 
-#' @param data 
-#' @param oobsamples 
-#' @param group 
-#' @param tree 
-#' @param impurityacc 
+#' @param num_group group number
+#' @param data input data
+#' @param oobsamples out of bag samples
+#' @param group group
+#' @param tree tree
+#' @param impurityacc impurity cumsum
 #'
 grpimpperm<-function(num_group,data,oobsamples,group,tree,impurityacc){
   data_perm<-perm(oobsamples,data,num_group,group)
@@ -328,9 +328,9 @@ grpimpperm<-function(num_group,data,oobsamples,group,tree,impurityacc){
 
 #' grpimpgini
 #'
-#' @param num_group 
-#' @param groupselec 
-#' @param tree 
+#' @param num_group group number
+#' @param groupselec selection group
+#' @param tree tree
 #'
 #' @return DecreaseImpurity
 #'

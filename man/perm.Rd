@@ -7,13 +7,13 @@
 perm(oobsamples, data, num_group, group)
 }
 \arguments{
-\item{oobsamples}{}
+\item{oobsamples}{out of bag samples}
 
-\item{data}{}
+\item{data}{data}
 
-\item{num_group}{}
+\item{num_group}{group number}
 
-\item{group}{}
+\item{group}{group}
 }
 \value{
 data_perm

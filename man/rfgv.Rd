@@ -46,7 +46,7 @@ is 1 while it is the number of fold for TPLDA.}
 
 \item{crit}{the impurity function used (1=Gini/2=Entropie/3=Misclas)}
 
-\item{penalty}{}
+\item{penalty}{Yes or No}
 
 \item{sampvar}{a boolean indicating if within each tree-split, a subset of variables is drawn for each group}
 
@@ -78,13 +78,13 @@ forest<-rfgv(train,
              sampvar_type=2,
              maxdepth=2,
              kfold=3,
-             replace=T,
+             replace=TRUE,
              case_min=1,
              sampsize=nrow(train),
              mtry_var=rep(2,5),
              grp.importance=TRUE,
              test=test,
-             keep_forest=F,
+             keep_forest=FALSE,
              crit=1,
              penalty="No")
 }

@@ -7,7 +7,7 @@
 gini(p)
 }
 \arguments{
-\item{p}{}
+\item{p}{probability}
 }
 \value{
 sum(p * (1 - p))

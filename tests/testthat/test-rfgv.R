@@ -16,13 +16,13 @@ test_that("rfgv works on data functions test", {
                sampvar_type=2,
                maxdepth=2,
                kfold=3,
-               replace=T,
+               replace=TRUE,
                case_min=1,
                sampsize=nrow(train),
                mtry_var=rep(2,5),
                grp.importance=TRUE,
                test=test,
-               keep_forest=F,
+               keep_forest=FALSE,
                crit=1,
                penalty="No")
   

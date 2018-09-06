@@ -185,9 +185,9 @@ cartgv.rf<-function(data,
 #' càd indice donné par rpart) et noeuds (indice du noeud dans l'arbre cartgv) 
 #' utilisées comme clés primaires pour identifier de manière unique un noeuds
 #'
-#' @param new 
-#' @param tree 
-#' @param tree_split 
+#' @param new data
+#' @param tree data
+#' @param tree_split data
 #'
 #' @return res
 #' @export
@@ -320,13 +320,13 @@ grpimpperm.rf<-function(num_group,
 #' Cette fonction faire un arbre de coupure pour un group donné 
 #' (donc group=1:nombre de variables dans le group).
 #'
-#' @param data 
-#' @param group 
-#' @param crit 
-#' @param case_min 
-#' @param maxdepth 
-#' @param p 
-#' @param penalty 
+#' @param data data
+#' @param group group
+#' @param crit criteria
+#' @param case_min minimum case
+#' @param maxdepth maximum depth
+#' @param p parameter
+#' @param penalty penalty
 #'
 #' @return list
 #' @export 

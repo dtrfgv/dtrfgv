@@ -9,7 +9,7 @@ group.selection(group, mtry = sqrt(unique(group[!is.na(group)])))
 \arguments{
 \item{group}{group that contain each variable}
 
-\item{mtry}{}
+\item{mtry}{m try}
 }
 \value{
 groups

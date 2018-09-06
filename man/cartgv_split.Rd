@@ -9,19 +9,19 @@ cartgv_split(data, group, crit = 1, case_min = 1, maxdepth = 2,
   penalty = "No")
 }
 \arguments{
-\item{data}{}
+\item{data}{data}
 
-\item{group}{}
+\item{group}{group}
 
-\item{crit}{}
+\item{crit}{criteria}
 
-\item{case_min}{}
+\item{case_min}{minimum case}
 
-\item{maxdepth}{}
+\item{maxdepth}{maximum depth}
 
-\item{p}{}
+\item{p}{parameter}
 
-\item{penalty}{}
+\item{penalty}{penalty}
 }
 \value{
 list

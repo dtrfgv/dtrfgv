@@ -33,8 +33,8 @@ opt.cut = function(perf) {
 
 #' performances
 #'
-#' @param score 
-#' @param test 
+#' @param score score
+#' @param test test
 #'
 #' @return resultats
 #' @importFrom ROCR performance

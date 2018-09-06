@@ -1,3 +1,7 @@
+context("rfblog")
+
+test_that("rf works on iris dataset", {
+
 data(iris)
 names(iris)
 table(iris$Species)
@@ -22,3 +26,7 @@ dim(train)
 
 #maximal_tree <-Tree_PLDA(train,group=group,grp.importance=TRUE)
 #print(maximal_tree$tree)
+
+testthat::expect_true(TRUE)
+
+}

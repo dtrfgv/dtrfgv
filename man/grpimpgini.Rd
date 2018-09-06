@@ -7,11 +7,11 @@
 grpimpgini(num_group, groupselec, tree)
 }
 \arguments{
-\item{num_group}{}
+\item{num_group}{group number}
 
-\item{groupselec}{}
+\item{groupselec}{selection group}
 
-\item{tree}{}
+\item{tree}{tree}
 }
 \value{
 DecreaseImpurity

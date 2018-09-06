@@ -2,29 +2,28 @@
 % Please edit documentation in R/Fonctions_CARTGVRF_sampvar1.R
 \name{predict.test.cartgv}
 \alias{predict.test.cartgv}
-\title{Title}
+\title{predict.test.cartgv}
 \usage{
 \method{predict}{test.cartgv}(new, tree, carts, coups)
 }
 \arguments{
-\item{new}{}
+\item{new}{new tree}
 
-\item{tree}{}
+\item{tree}{old tree}
 
-\item{carts}{}
+\item{carts}{classification and regression trees}
 
-\item{coups}{}
+\item{coups}{coups}
 }
 \value{
-la fonction renvoie une matrice donnant pour chaque
-individu de new (dans l'ordre) :
+matrix for every new item (sorted) :
 \itemize{
-\item hat.Y :la classe predite
+\item hat.Y : predicted class
 \item Y : la classe d'appartenance
 \item noeuds : le numero du noeud contenant l'observation
 \item score : le score le l'observation
 }
 }
 \description{
-Title
+Version of predict.gartgv using tapply instead of for loop
 }

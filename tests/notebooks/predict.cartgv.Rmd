@@ -1,17 +1,3 @@
-## Install IRkernel
-
-1. Install IRkernel in R
-```R
-install.packages(c('repr', 'IRdisplay', 'evaluate', 'crayon', 'pbdZMQ', 'devtools', 'uuid', 'digest'))
-devtools::install_github('IRkernel/IRkernel')
-```
-
-2. Making the kerbel available for jupyter
-
-```R
-IRkernel::installspec()
-```
-
 ## Valeurs retournées par la fonction `predict.cartgv` :
 
 La fonction renvoie une matrice donnant pour chaque 
@@ -144,10 +130,4 @@ tree[indx] <-
   lapply(tree[indx], function(x)
     as.numeric(as.character(x)))
 tree
-```
-
-```{r}
-```
-
-```{r}
 ```

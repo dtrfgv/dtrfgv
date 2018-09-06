@@ -7,17 +7,17 @@
 grpimpperm(num_group, data, oobsamples, group, tree, impurityacc)
 }
 \arguments{
-\item{num_group}{}
+\item{num_group}{group number}
 
-\item{data}{}
+\item{data}{input data}
 
-\item{oobsamples}{}
+\item{oobsamples}{out of bag samples}
 
-\item{group}{}
+\item{group}{group}
 
-\item{tree}{}
+\item{tree}{tree}
 
-\item{impurityacc}{}
+\item{impurityacc}{impurity cumsum}
 }
 \description{
 grpimpperm

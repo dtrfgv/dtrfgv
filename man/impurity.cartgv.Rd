@@ -2,14 +2,7 @@
 % Please edit documentation in R/Fonctions_CARTGVRF_sampvar1.R
 \name{impurity.cartgv}
 \alias{impurity.cartgv}
-\title{Title
-Elagage :  calcul de l'impuret'e a' partir d'un 'echantillon independant et d'une s'equence d'arbres emboites
-WARNING : fonction corrigée le 19 janvier2018 car il y avait un problème d'ordre pour les noeuds dans les apply
-La fonction prend en entrée un échantillon test et une séquence d'arbres emboités
-Pour chaque arbre, on prédit la classe de chaque observation de l'ensemble test;
-puis à partir de ces résultats, on calcul l'impureté de chaque arbre (gini, l'entropie et le taux de mal-classés sont calculés)
-method : la nature des coupures pour l'arbre CC binaire ("bin" si tree construit avec Tree_CART_bin())
-ou ("multi" si tree construit avec Tree_CART())}
+\title{impurity cartgv}
 \usage{
 impurity.cartgv(validation, tree_seq, tree)
 }
@@ -33,8 +26,10 @@ N = nb obs dans le neoud
 \code{P[hat.Y!=Y]} = tx de mal class'es dans le noeud
 }
 \description{
-Title
-Elagage :  calcul de l'impuret'e a' partir d'un 'echantillon independant et d'une s'equence d'arbres emboites
+Elagage
+}
+\details{
+calcul de l'impuret'e a' partir d'un 'echantillon independant et d'une s'equence d'arbres emboites
 WARNING : fonction corrigée le 19 janvier2018 car il y avait un problème d'ordre pour les noeuds dans les apply
 La fonction prend en entrée un échantillon test et une séquence d'arbres emboités
 Pour chaque arbre, on prédit la classe de chaque observation de l'ensemble test;

@@ -6,7 +6,7 @@
 #' 
 #' works for the case when y has only 0 and 1 categorie...
 #' 
-#' @param p 
+#' @param p probability
 #'
 #' @return entropy
 #'
@@ -17,7 +17,7 @@ entropy <- function(p) {
 
 #' Gini
 #'
-#' @param p 
+#' @param p probability
 #'
 #' @return sum(p * (1 - p))
 #'
@@ -63,19 +63,24 @@ bsamples<-function(ntree,data,sampsize,replace){
 #' note that the default value for m is sqrt(length(group))
 #'
 #' @param group group that contain each variable
-#' @param mtry 
+#' @param mtry m try
 #'
 #' @return groups
 #'
-group.selection<-function(group,mtry=sqrt(unique(group[!is.na(group)]))){
+group.selection<-function(group,
+                          mtry=sqrt(unique(group[!is.na(group)])))
+  {
+  
   if(length(which(is.na(group)))>0){
     print("Warning: there are NA in group; The fucntion will ignore these NA")
     label<-unique(group[!is.na(group)])
   }else{
     label<-unique(group)
   }
+  
   p<-length(label)
   groups<-NULL
+  
   if(mtry<=p){
     groups<-sample(label,mtry,replace=FALSE)
   }else{
@@ -109,7 +114,7 @@ group.selection<-function(group,mtry=sqrt(unique(group[!is.na(group)]))){
 #' @param test an independent data frame containing the same value that data
 #' @param keep_forest a boolean indicating if the forest will be retained in the output object
 #' @param crit the impurity function used (1=Gini/2=Entropie/3=Misclas)
-#' @param penalty 
+#' @param penalty Yes or No
 #' @param sampvar a boolean indicating if within each tree-split, a subset of variables is drawn for each group
 #' @param sampvar_type if sampvar_type="1" for each group a subset of variables belonging to the group 
 #' is drawn at the beging of the tree-split and only these variables are used to build the tree-split.
@@ -135,13 +140,13 @@ group.selection<-function(group,mtry=sqrt(unique(group[!is.na(group)]))){
 #'              sampvar_type=2,
 #'              maxdepth=2,
 #'              kfold=3,
-#'              replace=T,
+#'              replace=TRUE,
 #'              case_min=1,
 #'              sampsize=nrow(train),
 #'              mtry_var=rep(2,5),
 #'              grp.importance=TRUE,
 #'              test=test,
-#'              keep_forest=F,
+#'              keep_forest=FALSE,
 #'              crit=1,
 #'              penalty="No")
 rfgv<-function(data,
