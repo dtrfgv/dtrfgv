@@ -23,36 +23,37 @@ This is a basic example which shows you how to solve a common problem:
 ``` r
 library(tplda)
 
-data(data_pour_tester_fonctions)
-
-train<-data[which(data[,1]=="train"),-1]           # negative index into the `data` 
-test<-data[which(data[,1]=="test"),-1]             # object specifying all rows and all columns 
+data(rfgv_dataset)
+data(group)
+data  <- rfgv_dataset 
+train <- data[which(data[,1]=="train"),-1]           # negative index into the `data` 
+test  <- data[which(data[,1]=="test"),-1]             # object specifying all rows and all columns 
 validation<-data[which(data[,1]=="validation"),-1] # except the first column.
 
 forest<-rfgv(train,
              group=group,
              groupImp=group,
-             ntree=1,
+             ntree=4,
              mtry_group=3,
              sampvar=TRUE,
              sampvar_type=2,
              maxdepth=2,
              kfold=3,
-             replace=T,
+             replace=TRUE,
              case_min=1,
              sampsize=nrow(train),
              mtry_var=rep(2,5),
              grp.importance=TRUE,
              test=test,
-             keep_forest=F,
+             keep_forest=FALSE,
              crit=1,
              penalty="No")
-
+  
 print(forest$importance)
-#>    MeanDecrAcc MeanDecrAccNor
-#> 1 -0.007518797   -0.001503759
-#> 2  0.105263158    0.021052632
-#> 3  0.000000000    0.000000000
-#> 4 -0.075187970   -0.015037594
-#> 5  0.000000000    0.000000000
+#>   MeanDecrAcc MeanDecrAccNor
+#> 1  0.04328686    0.008657372
+#> 2  0.19115480    0.038230960
+#> 3  0.01059353    0.002118706
+#> 4  0.02221928    0.004443857
+#> 5  0.02163947    0.004327894
 ```
