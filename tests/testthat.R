@@ -1,4 +1,4 @@
 library(testthat)
-library(tplda)
+library(dtrfgv)
 
-test_check("tplda")
+test_check("dtrfgv")

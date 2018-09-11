@@ -1,6 +1,4 @@
- rm(list=ls())
- 
- library(tplda)
+ library(dtrfgv)
  
  data("data_pour_tester_fonctions")
  

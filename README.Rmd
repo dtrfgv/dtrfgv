@@ -12,10 +12,10 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# Tree Penalized Linear Discriminant Analysis
+# Decision Trees and Random Forests for Grouped Variables
 
-[![Build Status](https://travis-ci.org/pnavaro/tplda.svg?branch=master)](https://travis-ci.org/pnavaro/tplda)
-[![Coverage status](https://codecov.io/gh/pnavaro/tplda/branch/master/graph/badge.svg)](https://codecov.io/github/pnavaro/tplda?branch=master)
+[![Build Status](https://travis-ci.org/dtrfgv/dtrfgv.svg?branch=master)](https://travis-ci.org/dtrfgv/dtrfgv)
+[![Coverage status](https://codecov.io/gh/dtrfgv/dtrfgv/branch/master/graph/badge.svg)](https://codecov.io/github/dtrfgv/dtrfgv?branch=master)
 
 Attempt to create an R package from prototype available at ["Classification tree algorithm for grouped variables"](https://github.com/apoterie/TPLDA).
 
@@ -28,7 +28,7 @@ Don't try to install this package :sweat_smile:
 This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
-library(tplda)
+library(dtrfgv)
 
 data(rfgv_dataset)
 data(group)
