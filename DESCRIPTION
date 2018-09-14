@@ -1,14 +1,12 @@
 Package: dtrfgv
-Description: This package implements "The Tree Penalized Linear Discriminant Analysis algorithm (TPLDA)".
-   It is a new-tree based approach which constructs a classification rule based on groups of variables. 
-   It consists in splitting a node by repeatedly selecting a group and then applying a regularized linear 
-   discriminant analysis based on this group. This process is repeated until some stopping criterion is 
-   satisfied. A pruning strategy is proposed to select an optimal tree.
+Description: This package implements "The CART for Grouped of Variables (CARTGV)" algorithm and the "Random Forests for Grouped Variables (RFGV)" algorithm, 
+   for binary classification problems. CARTGV is a new-tree based approach which constructs a decision trees based on groups of variables. RFGV is a new 
+   random forest algorithm based on a modified version of CARTGV. RFGV allows to build random forest for grouped variables.
 Type: Package
 Title: Decision Trees and Random Forests for Grouped Variables
 Version: 0.00
 Date: 2017-03-02
-Author: Audrey Poterie
+Author: Audrey Poterie <apoterie@insa-rennes.fr>
 Depends: R (>= 3.0.0)
 License: GPL (>= 2)
 Maintainer: Pierre Navaro <navaro@math.cnrs.fr>

@@ -1,29 +1,31 @@
-######## Manipulation des arbres CART (package rpart)
+############################################################################################
+###########################        Tools for rpart objects       ########################### 
+############################################################################################ 
 
 as.numeric.factor <- function(x) {as.numeric(as.character(x))}
 
-
+#' calcul_cart
 #'
-#'Reconstruction  des arbres CART
+#' Create a data frame that sums up a CART tree obtained with the function in the rpart package
 #'
-#'La fonction construit un data.frame qui permet de donner toutes les infos necessaire à 
-#'la reconstruction de l'arbre cart construit par RPART.
-#'Attention cette fonction n'est valide que si rpart est parametré
-#'avec control=rpart.control(maxsurrogate=0, maxcompte=0)
+#' WARNING: the option 'control=rpart.control(maxsurrogate=0, maxcompte=0)' must be used in the function rpart when building the rpart object. 
+#'           Otherwise the result returned by the function may be incorrect
 #'
-#' @param cart objet rpart
-#' @param data data.frame ayant servi à la construction de l'objet cart
+#' @param cart  an rpart object
+#' @param data  the data used to create the rpart object. It must be a data frame
 #'
-#' @return
-#' liste  : 
-#'   - tableau : un data.frame qui donne toutes les infos sur l'arbre cart
-#'      ("node_name_cart"= numero du noeud,"parent"=ancêtre,"depth"=profondeur du noeud,
-#'       "var"=variable utilisée pour couper le noeud,"threshold"=seuil de la coupure,
-#'        "n"=effectif du noeud,"pred"=label du neoud,"n_noncase"= nombre d'observation "Y=0" dans le noeuds
-#'        ,"n_case"=nombre d'individus "\code{Y=1}" dans le noeud,"\code{prob = P[Y=1|N]}", 
-#'        "sens"=sens pour la règle de coupure divisant son noeud parent: 
-#'              le sous ensembles des observations verifiant x<threshold est envoyé à gauche si 
-#'              "inf" à droite sinon. )
+#' @return tableau  a data frame that sums up the CARt tree:
+#'                  - node_name_cart: node number
+#'                  - parent: ancestor of the node 
+#'                  - depth: depth of the node
+#'                  - var: name of the splitting variables
+#'                  - threshold: splitting value 
+#'                  - n: number of obsevations in the node 
+#'                  - pred: label of the node
+#'                  - n_case: number of observation with "\code{Y=1}" in the node 
+#'                  - n_noncase: number of observation with "\code{Y=0}" in the node 
+#'                  - \code{prob = P[Y=1|N]}: empirical probability that in the node an observation belongs to the label "\code{Y=1}" 
+#'                  - sens: direction for the decision rule. Observation with "\code{x<threshold}" are sent to the left node and observations with "\code{x>=threshold}" are sent to the right node.
 #' 
 #' @import rpart
 #'
@@ -76,24 +78,6 @@ calcul_cart <- function(cart,data) {
       tableau$threshold[which(tableau$var!="<leaf>")]<-as.numeric.factor(split[,"index"])
       sens[which(tableau$var!="<leaf>")]<-ifelse(as.numeric.factor(split[,"ncat"])==-1,"inf","sup")
       tableau$sens<-sens
-      
-      # i_leafs<-which(tableau$var=="<leaf>")
-      # for(l in 1:length(i_leafs)){
-      #   i_node<-i_leafs[l]
-      #   ind<-data[which(cart$where==i_node),]#cart$where donne l'indice de la feuille et non le nom du noeud
-      #   while(!is.na(tableau$parent[i_node])){
-      #     i_parent<-which(as.numeric.factor(tableau$node_name_cart)==
-      #                       as.numeric.factor(tableau$parent[i_node]))
-      #     if(mean(ind[,as.character(tableau$var[i_parent])])>=
-      #        as.numeric.factor(tableau$threshold[i_parent])){
-      #       sens[i_node]<-"sup"
-      #     }else{
-      #       sens[i_node]<-"inf"
-      #     }
-      #     i_node<-i_parent
-      #   }
-      # }
-      # tableau$sens <- sens
       tableau
       
     }else{
@@ -126,23 +110,25 @@ calcul_cart <- function(cart,data) {
   return(tableau)
 }
 
-#' Prediction de la feuille
+
+#' pred_cart
 #' 
-#' Foncion permettant de donner le nom cart et l'indice du noeud (sortie de la fonction carts$where)
-#' qui contient une nouvelle observation
-#' Paramètres d'entrée:
+#' Function used to predict the label ("0" or "1") of a new observation from a fitted CARTGV object. 
+#' 
+#' @param new_obs a new observation. It must be a vector containing the values of the variables of the learning data set used to built the rpart object
+#' @param tableau object returns by the function 'calcul_cart' 
 #'
-#' @param new_obs une nouvelle observation (avec les memes variables que celle de l'echantillonn d'apprentissage)
-#' @param tableau sortie de la fonction calcul_cart()
+#' @return a vector with elements (in this order): number of the predicted node in the splitting tree, index of the predicted node in the object returned 
+#'                                                 by the function 'pred_cart', the label of the predicted node, the number of observations with "\code{Y=1}" 
+#'                                                 in the predicted node, the number of observations with "\code{Y=0}" in the predicted node and the empirical 
+#'                                                 probability that in the predicted node an observation belongs to the label "\code{Y=1}" 
 #'
-#' @return vector
+#'
 #'
 pred_cart<-function(new_obs,tableau){
   i_node<-1
   while(as.character(tableau$var[i_node])!="<leaf>"){
-    #print(paste("i_node:",i_node))
     i_sons<-which(as.numeric.factor(tableau$parent)==as.numeric.factor(tableau$node_name_cart[i_node]))
-    #print(paste("i_sons:",i_sons))
     if(new_obs[as.character(tableau$var[i_node])]>=as.numeric.factor(tableau$threshold[i_node])){
       if(tableau$sens[i_node]=="sup"){
         i_node<-i_sons[1]
@@ -170,9 +156,9 @@ pred_cart<-function(new_obs,tableau){
 
 
 
-#' Elagage 
+#' impurete_rpart
 #' 
-#' calcul de l'impurete 
+#' Compute the impurity of a sequence of trees which are based on a rpart object.  
 #' 
 #' a partir d'un echantillon independant et d'une sequence d'arbres emboites
 #' La fonction prend en entree un échantillon test et une sequence d'arbres emboites
@@ -180,19 +166,19 @@ pred_cart<-function(new_obs,tableau){
 #' puis a partir de ces resultats, on calcul l'impurete de chaque arbre (gini, l'entropie et 
 #' le taux de mal-classes sont calcules)
 #'
-#' @param validation validation data
-#' @param tree_seq tree sequence
+#' @param validation an new data set. It must be a data frame containing the same variables that those contained in the learning data set used to built the rpart object.
+#' @param tree_seq   a sequence of subtrees. It must be a list where each element is an object returned by the function 'rpart::snip.rpart' 
 #'
-#' @return
-#'  - impurete : une matrice contenant les differentes valeurs d'impuret'e pour chaque sous-arbres
-#'  - pred = liste des predictions pour chaque sous arbres
-#'  - summary_noeuds : liste contenant pour chaque sous-arbre des infos sur ses noeuds: 
-#'      - nom_noeuds = noms du noeuds
-#'      - N = nb obs dans le neoud
-#'      - \code{N[Y=1]} = nb d'obs dans le noeuds appartenant a' la class "Y=1" 
-#'      - \code{P[Y=1]} = proba pour une obs du noeuds d'appartenanir  a' la class "Y=1"
-#'      - \code{P[Y=0]} = proba pour une obs du noeuds d'appartenanir  a' la class "Y=0"
-#'      - \code{P[hat.Y!=Y]} = tx de mal class'es dans le noeud
+#' @return a list with elements
+#'  - impurete:  a matrix containing the impurity values (respectively Gini, Entropy and Misclassification rate) of each subtrees evaluated on the data set '\code{validation}'.
+#'  - pred:      a list containing the prediction vector of each subtree
+#'  - summary_noeuds:  a list providing informations about each subtree:
+#'      - nom_noeuds: number of the node
+#'      - N: number of observations in the node
+#'      - \code{N[Y=1]}: number of observation with "\code{Y=1}" in the node 
+#'      - \code{P[Y=1]}: empirical probability that in the node an observation belongs to the label "\code{Y=1}" 
+#'      - \code{P[Y=0]}: empirical probability that in the node an observation belongs to the label "\code{Y=0}"
+#'      - \code{P[hat.Y!=Y]}: misclassification rate in the node
 #'
 impurete_rpart <- function(validation, tree_seq) {
   N_tree <- length(tree_seq)
