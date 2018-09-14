@@ -210,7 +210,7 @@ rfgv<-function(data,
                       crit=crit,
                       case_min=case_min,
                       maxdepth=maxdepth,
-                      p=mtry_group,
+                      mtry_group=mtry_group,
                       penalty=penalty,
                       mtry_var=mtry_var)
       
