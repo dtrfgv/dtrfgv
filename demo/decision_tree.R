@@ -2,8 +2,7 @@ rm(list=ls())
 
 library(rpart)
 
-magasin=read.table(here::here("data","magasin.csv"),
-                   sep=";", header=T, dec=",")
+magasin=read.table(here::here("data","magasin.csv"), sep=";", header=T, dec=",")
 attach(magasin)
 dt=rpart(Achat~Prix+Flashitude+Branchitude+Qualite, data=magasin)
 

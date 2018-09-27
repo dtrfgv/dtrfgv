@@ -42,7 +42,7 @@ cartgv<-function(data,
                  case_min=1,
                  maxdepth=2,
                  penalty="No",
-                 IMPORTANCE=ifelse(RF==TRUE,FALSE,TRUE))
+                 IMPORTANCE=TRUE)
   {
   
   ##Initialisation
@@ -300,7 +300,7 @@ split_cartgv<-function(node,
 #'         - i_noeuds: name of the node in the splitting tree.
 #'         
 #' @export
-predict_cartgv<-function(new,tree, ccarts,coups){
+predict_cartgv<-function(new,tree, carts,coups){
   indx <- colnames(tree)
   indx <- indx[which(indx != 'leave')]
   tree[indx] <- lapply(tree[indx], as.numeric.factor)

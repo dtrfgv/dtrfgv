@@ -240,11 +240,9 @@ cartgv_split<-function(data,group,crit=1,case_min=1,maxdepth=2,p=floor(sqrt(leng
       
       splits[[i]]<-split_cartgv(node=node,
                                 group=group,
-                                igroups,
                                 label=yval[i],
                                 maxdepth=1,
-                                penalty="No",
-                                sampvar=FALSE)
+                                penalty="No")
       
       improvment[i]<-max(unlist(splits[[i]][[crit]]))
       if (improvment[i] > 0){

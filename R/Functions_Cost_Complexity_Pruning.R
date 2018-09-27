@@ -6,10 +6,17 @@
 
 library(stringr)
 
-# =========================================================================================
-# descendant(node,tree) :  function that find the direct descendants of a node
-# =========================================================================================
-
+#' descendant
+#' 
+#' function that find the direct descendants of a node
+#'
+#' @param node 
+#' @param tree 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 descendant<-function(node,tree){
   descendants<-c()
   if(tree$leave[tree$node==node]=="*"){# if node is terminal
@@ -20,11 +27,18 @@ descendant<-function(node,tree){
   return(descendants)
 }
 
-# =========================================================================================
-# conditionnal_error(node,tree) : function that calculate the missclassification error 
-# assuming that we are in the node 
-# =========================================================================================
 
+#' conditional_error
+#' 
+#' function that calculate the missclassification error assuming that we are in the node 
+#'
+#' @param node 
+#' @param tree 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 conditional_error<-function(node,tree){
   cond_err<-NULL
   if(as.numeric(as.character(tree$yval[tree$node==node]))==1){
@@ -35,24 +49,49 @@ conditional_error<-function(node,tree){
   return(cond_err)
 }
 
-# =========================================================================================
-# node_prob(node,tree) : function that calculate the probability of being at the node
-# =========================================================================================
 
+#' node_prob
+#' 
+#' function that calculate the probability of being at the node
+#'
+#' @param node 
+#' @param tree 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 node_prob<-function(node,tree){
   return((as.numeric(as.character(tree$n[tree$node==node])))/(as.numeric(as.character(tree$n[1]))))
 }
 
-# =========================================================================================
-# local_error(node,tree) : function that calculate the missclassification error 
-# that the node contribute
-# WARNING : don't use the function local_error_0(node,tree) which use to much rounded number 
-# and so lead to error
-# =========================================================================================
 
+#' local_error_0
+#' 
+#' function that calculate the missclassification error that the node contribute
+# WARNING : don't use the function local_error_0(node,tree) which use to much rounded number and so lead to error
+#'
+#' @param node 
+#' @param tree 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 local_error_0<-function(node,tree){
   return(node_prob(node,tree)*conditional_error(node,tree))
 }
+
+
+#' local_error
+#'
+#' @param node 
+#' @param tree 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 
 
 local_error<-function(node,tree){
@@ -68,12 +107,23 @@ local_error<-function(node,tree){
 
 
 # =========================================================================================
-# get_nodes(node,tree) : function that gives the nodes of the subtree stremming 
-# from node
-# WARNINGS: this function was modified on the 4th december 2017 to be adapted to 
-#           non-binary trees.
+# get_nodes(node,tree) : 
 # =========================================================================================
 
+#' get_nodes
+#'
+#'
+#'function that gives the nodes of the subtree stremming from node
+#'
+#'WARNINGS: this function was modified on the 4th december 2017 to be adapted to non-binary trees.
+#'
+#' @param node 
+#' @param tree 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 get_nodes<-function(node,tree){
   nodes<-c(node)
   if(sum(descendant(node,tree))>0){
@@ -85,23 +135,36 @@ get_nodes<-function(node,tree){
   return(as.numeric(as.character(nodes)))
 }
 
-# =========================================================================================
-# get_node_leaves(node,tree) : function that gives the leaves of the subtree stremming 
-# from node
-# =========================================================================================
 
+#' get_node_leaves
+#'
+#'function that gives the leaves of the subtree stremming from node
+#'
+#' @param node 
+#' @param tree 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 get_node_leaves<-function(node,tree){
   all_nodes<-get_nodes(node,tree)
   return(as.numeric(as.character(all_nodes[tree$leave[all_nodes]=="*"])))
 }
 
-# =========================================================================================
-# node_error(node,tree) : function that calculate the misclassification error of the subtree 
-# stremming from node
-# Note that the error is not considered conditionaly to the fact that the root of 
-# the subtree is node
-# =========================================================================================
 
+#' node_error
+#' 
+#' Function that calculate the misclassification error of the subtree stremming from node
+# Note that the error is not considered conditionaly to the fact that the root of the subtree is node
+#'
+#' @param node 
+#' @param tree 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 node_error<-function(node,tree){
   #subtree<-as.data.frame(tree[which(tree$node %in% get_nodes(node,tree)),])
   all_leaves<-get_node_leaves(node,tree)
@@ -112,22 +175,36 @@ node_error<-function(node,tree){
   return(err)
 }
 
-# =========================================================================================
-# cost_error(node,tree) : function that calculate the misclassification error of the subtree 
-# stremming from node penalized by alpha
-# =========================================================================================
 
+#' cost_error
+#' 
+#' function that calculate the misclassification error of the subtree stremming from node penalized by alpha
+#'
+#' @param node 
+#' @param tree 
+#' @param alpha 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 cost_error<-function(node,tree,alpha){
   return(node_error(node,tree)+ alpha*length(get_node_leaves(node,tree)))
 }
 
 
-# =========================================================================================
-# node_cost (node,tree) : function that gives the change in tree cost (difference between
-# the node error and the local node error) 
-# ==> gives alpha (function g(t) in the Breiman's book)
-# =========================================================================================
 
+#' node_cost
+#' 
+#' function that gives the change in tree cost (difference between the node error and the local node error)  ==> gives alpha (function g(t) in the Breiman's book)
+#'
+#' @param node 
+#' @param tree 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 node_cost<-function(node,tree){
   return((local_error(node,tree)-node_error(node,tree))/(length(get_node_leaves(node,tree))-1))
 }
@@ -139,6 +216,20 @@ node_cost<-function(node,tree){
 #           non-binary trees.
 # =========================================================================================
 
+#'best_node_cost
+#'
+#'
+#' function that gives the minimum change in tree cost ==> gives alpha = min g(t), for all t in T
+#' 
+#' WARNINGS: this function was modified on the 4th december 2017 to be adapted to non-binary trees.
+#' 
+#' @param node 
+#' @param tree 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 best_node_cost<-function(node,tree){
   best_cost<-node_cost(node,tree)
   if(sum(descendant(node,tree))>0){# the node is not a leave
@@ -153,12 +244,15 @@ best_node_cost<-function(node,tree){
 }
 
 
-# =========================================================================================
-# Cost_complexity (tree) :  function that built the sequence of alpha and of nested trees
-# 
-# =========================================================================================
 
-
+#' cost_complexity
+#'
+#' @param tree 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 cost_complexity<-function(tree){
   nb_noeuds<-length(tree$node)
   table_complexity<-as.data.frame(matrix(rep(NA,nb_noeuds*7),ncol=7,nrow=nb_noeuds))
@@ -288,6 +382,14 @@ cost_complexity<-function(tree){
 
 
 
+#' cost_complexity_binary
+#'
+#' @param tree 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 cost_complexity_binary<-function(tree){
   nb_noeuds<-length(tree$node)
   table_complexity<-as.data.frame(matrix(rep(NA,nb_noeuds*9),ncol=9,nrow=nb_noeuds))
@@ -418,11 +520,18 @@ cost_complexity_binary<-function(tree){
 ##### R_Ttk   : erreur de la partie elaguee a l'etape k
 
 
-# =========================================================================================
-# extratct_subtrees (tree,cp) :  function that extract the sequence of nested trees
-# 
-# =========================================================================================
 
+#' extratct_subtrees
+#' 
+#' function that extract the sequence of nested trees
+#'
+#' @param tree 
+#' @param cp 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 extract_subtrees<-function(tree,cp){
   n<-nrow(cp)
   subtrees_seq<-list()

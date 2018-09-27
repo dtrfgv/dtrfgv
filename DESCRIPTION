@@ -5,13 +5,13 @@ Description: This package implements "The CART for Grouped of Variables (CARTGV)
 Type: Package
 Title: Decision Trees and Random Forests for Grouped Variables
 Version: 0.00
-Date: 2017-03-02
+Date: 2018-07-01
 Author: Audrey Poterie <apoterie@insa-rennes.fr>
 Depends: R (>= 3.0.0)
 License: GPL (>= 2)
 Maintainer: Pierre Navaro <navaro@math.cnrs.fr>
 Imports:
-  caret, ROCR, gtools, rpart, stats, e1071
+  caret, ROCR, gtools, rpart, stats, e1071,
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0
 Suggests: testthat,

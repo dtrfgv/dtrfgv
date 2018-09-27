@@ -1,7 +1,19 @@
-#*****************************************************#
-#            Surrogate-split calculation              #
-#*****************************************************#
 
+
+#' surrogate_split
+#'
+#' @param Ystar 
+#' @param node 
+#' @param group 
+#' @param igroup 
+#' @param penalty 
+#' @param label 
+#' @param maxdepth 
+#'
+#' @return
+#' @export
+#'
+#' @examples
 surrogate_split<-function(Ystar,node,group,igroup,penalty='No',label,maxdepth){
   ivar<-which(group==igroup)
   group.size<-length(ivar)
