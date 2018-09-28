@@ -1,7 +1,10 @@
 Package: dtrfgv
-Description: This package implements "The CART for Grouped of Variables (CARTGV)" algorithm and the "Random Forests for Grouped Variables (RFGV)" algorithm, 
-   for binary classification problems. CARTGV is a new-tree based approach which constructs a decision trees based on groups of variables. RFGV is a new 
-   random forest algorithm based on a modified version of CARTGV. RFGV allows to build random forest for grouped variables.
+Description: This package implements "The CART for Grouped of Variables (CARTGV)" 
+   algorithm and the "Random Forests for Grouped Variables (RFGV)" algorithm, 
+   for binary classification problems. CARTGV is a new-tree based approach which 
+   constructs a decision trees based on groups of variables. RFGV is a new 
+   random forest algorithm based on a modified version of CARTGV. RFGV allows to 
+   build random forest for grouped variables.
 Type: Package
 Title: Decision Trees and Random Forests for Grouped Variables
 Version: 0.00
@@ -11,7 +14,7 @@ Depends: R (>= 3.0.0)
 License: GPL (>= 2)
 Maintainer: Pierre Navaro <navaro@math.cnrs.fr>
 Imports:
-  caret, ROCR, gtools, rpart, stats, e1071,
+  caret, ROCR, gtools, rpart, stats, e1071
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0
 Suggests: testthat,
