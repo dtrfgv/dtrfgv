@@ -2,18 +2,17 @@
 #################    Random Forests algorithm for grouped variables     ####################
 ############################################################################################
 
-
 #' entropy
-#' 
+#'
 #' Calculate the value of the entropy for binary classification (i.e. Y= 0 or 1)
-#' 
+#'
 #' @param p a vector containit the probabilities '\code{P[Y=0]}' and '\code{P[Y=1]}'
 #'
 #' @return the value of the entropy
 #'
 entropy <- function(p) {
   if (any(p == 1)) return(0)# -sum(p *
-  -sum(p*log(p,2)) 
+  -sum(p*log(p,2))
 }
 
 #' gini
@@ -29,15 +28,15 @@ gini <- function(p) {
 }
 
 #' bsamples
-#' 
+#'
 #' Generates the bootstrap samples used to built a RFGV forest
-#' 
+#'
 #'
 #' @param ntree number of boostrap samples (i.e. the number of trees in the RFGV forest)
 #' @param data  the learning data set. it must be a data frame
 #' @param sampsize an interger indicating the size of the boostrap samples
 #' @param replace a boolean indicating if sampling of cases is done with or without replacement?
-#' 
+#'
 #' @return a list with elements
 #'          - bsamples:  a matrix which with '\code{sampsize}' lines and '\code{B}' columns which contains the indices of the observations
 #'                       belonging to each boostrap sample
@@ -54,9 +53,9 @@ bsamples<-function(ntree,data,sampsize,replace){
 
 
 #' group.selection
-#' 
+#'
 #' Selects randomly '\code{mtry}' groups
-#' 
+#'
 #'
 #' @param group a vector indicating the group label of each variable
 #' @param mtry  a number indicating the number of selected group
@@ -66,17 +65,17 @@ bsamples<-function(ntree,data,sampsize,replace){
 group.selection<-function(group,
                           mtry=sqrt(unique(group[!is.na(group)])))
   {
-  
+
   if(length(which(is.na(group)))>0){
     print("Warning: there are NA in group; The fucntion will ignore these NA")
     label<-unique(group[!is.na(group)])
   }else{
     label<-unique(group)
   }
-  
+
   p<-length(label)
   groups<-NULL
-  
+
   if(mtry<=p){
     groups<-sample(label,mtry,replace=FALSE)
   }else{
@@ -88,68 +87,97 @@ group.selection<-function(group,
 
 
 #' rfgv
-#' 
-#' Random Forest for Grouped Variables. Only implement for binary classification. 
+#'
+#' Random Forest for Grouped Variables. Only implement for binary classification.
 #' The function builts a large number of random decision trees based on a variant of the CARTGV method.
 #'
-#' @param data a data frame containing the response value (for the first variable)  and the predictors 
-#' and used to grow the tree. The name of the response value must be "Y". 
-#' The response variable must be the first variable of the data frame and the variable meust be coded as the two levels "0" and "1".
-#' @param group a vector with the group number of each variable. 
-#  (WARNING : if there are "\code{p}" goups, the groups must be numbers from "\code{1}" to "\code{p}" in increasing order. The group label of the response variable is missing (i.e. NA))
-#' @param groupImp a vector which indicates the group number of each variable (for the groups used to compute the group importance).
-#' @param ntree an integer indicating the number of trees to grow 
+#' @param data a data frame containing the response value (for the first variable)  and the predictors
+#' and used to grow the tree. The name of the response value must be "Y".
+#' The response variable must be the first variable of the data frame and the variable meust be coded
+#' as the two levels "0" and "1".
+#' @param group a vector with the group number of each variable.
+#'  (WARNING : if there are "\code{p}" goups, the groups must be numbers from "\code{1}" to "\code{p}"
+#' in increasing order. The group label of the response variable is missing (i.e. NA))
+#' @param groupImp a vector which indicates the group number of each variable (for the groups used
+#' to compute the group importance).
+#' @param ntree an integer indicating the number of trees to grow
 #' @param mtry_group an integer the number of variables randomly samples as candidates at each split.
 #' @param maxdepth an integer indicating the maximal depth for a split-tree. The default value is 2.
 #' @param replace a boolean indicating if sampling of cases is done with or without replacement?
 #' @param sampsize an interger indicating the size of the boostrap samples.
-#' @param case_min an integer indicating the minimun number of cases/non cases in a terminal nodes. The default is 1.
+#' @param case_min an integer indicating the minimun number of cases/non cases in a terminal nodes.
+#' The default is 1.
 #' @param grp.importance a boolean indicating if the importance of each group need to be computed
 #' @param test an independent data frame containing the same variables that "\code{data}".
 #' @param keep_forest a boolean indicating if the forest will be retained in the output object
-#' @param crit an integer indicating the impurity function used (1=Gini index / 2=Entropie/ 3=Misclassification rate)
-#' @param penalty a boolean indicating if the decrease in node impurity must take account of the group size. Four penalty are available: "No","Size","Root.size" or "Log".
-#' @param sampvar a boolean indicating if within each splitting tree, a subset of variables is drawn for each group
-#' @param mtry_var a vector of length the number of groups. It indicates the number of drawn variables for each group. Usefull only if sampvar=TRUE 
+#' @param crit an integer indicating the impurity function used (1=Gini index / 2=Entropie/
+#' 3=Misclassification rate)
+#' @param penalty a boolean indicating if the decrease in node impurity must take account of the
+#' group size. Four penalty are available: "No","Size","Root.size" or "Log".
+#' @param sampvar a boolean indicating if within each splitting tree, a subset of variables is
+#' drawn for each group
+#' @param mtry_var a vector of length the number of groups. It indicates the number of drawn
+#' variables for each group. Usefull only if sampvar=TRUE
 #'
 #' @return a list with elements:
-#'         - predicted: the predicted values of the observations in the training set named "\code{data}". The i-th element being the prediction from the ith tree and based
-#'                      on the i-th out-of-bag sample. The i-th element is missing if the i-th observation is not part of the the i-th out-of-bag sample.
-#'         - importance: a data frame with two coloums. The first column provides the value of the permutation importance of each group 
-#'                       and the second one gives the value of the permutation importance of each group normalized by the size of the group
-#'         - err.rate:   a vector error rates of the prediction on the training set named "\code{data}", the i-th element being the (OOB) error rate 
-#'                       for all trees up to the i-th.            
-#'         - vote: a data frame with one row for each input data point and one column for each class ("0" and "1", in this order), giving the fraction 
+#'  \itemize{
+#'      \item `predicted` : the predicted values of the observations in the training set named
+#'      "\code{data}". The i-th element being the prediction from the ith tree and based
+#'                      on the i-th out-of-bag sample. The i-th element is missing if the i-th
+#'                      observation is not part of the the i-th out-of-bag sample.
+#'      \item `importance`: a data frame with two coloums. The first column provides the value
+#'      of the permutation importance of each group
+#'                       and the second one gives the value of the permutation importance of
+#'                       each group normalized by the size of the group
+#'      \item `err.rate`:   a vector error rates of the prediction on the training set named
+#'      "\code{data}", the i-th element being the (OOB) error rate
+#'                       for all trees up to the i-th.
+#'      \item `vote`: a data frame with one row for each input data point and one column for
+#'      each class ("0" and "1", in this order), giving the fraction
 #'                 number of (OOB) ‘votes’ from the random forest.
-#'         - pred: the predicted values of the observations in the training set named "\code{data}". It correspond to the majority vote computed by using the 
+#'      \item `pred`: the predicted values of the observations in the training set named
+#'      "\code{data}". It correspond to the majority vote computed by using the
 #'                 matrix of predictions "\code{predicted}".
-#'         - confusion:  the object returned by the function "\code{xtab_function}". There are the confusion matrix of the prediction (based on OOB data) and
-#'                       the associated statistics. For more details, see the function "\code{xtab_function}".
-#'         - err.rate.test:  (Only if test!=NULL) a vector error rates of the prediction on the test set named "\code{test}", the i-th element being the error rate 
-#'                           for all trees up to the i-th. 
-#'         - vote.test:  (Only if test!=NULL) a data frame with one row for each observtion in "\code{test}" and one column for each class ("0" and "1", in this order), 
+#'      \item `confusion`:  the object returned by the function "\code{xtab_function}".
+#'      There are the confusion matrix of the prediction (based on OOB data) and
+#'                       the associated statistics. For more details, see the function
+#'                       "\code{xtab_function}".
+#'      \item `err.rate.test`:  (Only if test!=NULL) a vector error rates of the prediction
+#'      on the test set named "\code{test}", the i-th element being the error rate
+#'                           for all trees up to the i-th.
+#'      \item `vote.test`:  (Only if test!=NULL) a data frame with one row for each observtion
+#'      in "\code{test}" and one column for each class ("0" and "1", in this order),
 #'                       giving the number of ‘votes’ from the random forest.
-#'         - pred.test:  (Only if test!=NULL) the predicted values of the observations in "\code{test}".
-#'         - confusion.test:  (Only if test!=NULL)  the object returned by the function "\code{xtab_function}". There are the confusion matrix of the prediction (based on 
-#'                            "\code{test}") and the associated statistics. For more details, see the function "\code{xtab_function}".
-#'         - oob.times:  number of times that an observation in the training set named "\code{data}" is ‘out-of-bag’ (and thus used in computing OOB error estimate)
-#'         - keep_forest:  a boolean indicating if the forest will be retained in the output object
-#'         - sampvar:  a boolean indicating if within each splitting tree, a subset of variables is drawn for each group
-#'         - maxdepth:  an integer indicating the maximal depth for a split-tree. The default value is 2
-#'         - mtry_group:  an integer the number of variables randomly samples as candidates at each split
-#'         - mtry_var: a vector of length the number of groups. It indicates the number of drawn variables for each group. Usefull only if sampvar=TRUE
-#'         - ntree: an integer indicating the number of trees to grow.
-#'                       
+#'      \item `pred.test`:  (Only if test!=NULL) the predicted values of the observations
+#'      in "\code{test}".
+#'      \item `confusion.test`:  (Only if test!=NULL)  the object returned by the function
+#'      "\code{xtab_function}". There are the confusion matrix of the prediction (based on
+#'                            "\code{test}") and the associated statistics. For more details,
+#'                             see the function "\code{xtab_function}".
+#'      \item `oob.times`:  number of times that an observation in the training set named
+#'      "\code{data}" is ‘out-of-bag’ (and thus used in computing OOB error estimate)
+#'      \item `keep_forest`:  a boolean indicating if the forest will be retained in the
+#'      output object
+#'      \item `sampvar`:  a boolean indicating if within each splitting tree, a subset of
+#'      variables is drawn for each group
+#'      \item `maxdepth`:  an integer indicating the maximal depth for a split-tree.
+#'      The default value is 2
+#'      \item `mtry_group`:  an integer the number of variables randomly samples as candidates
+#'      at each split
+#'      \item `mtry_var`: a vector of length the number of groups. It indicates the number
+#'      of drawn variables for each group. Usefull only if sampvar=TRUE
+#'      \item `ntree`: an integer indicating the number of trees to grow.
+#' }
 #' @export
 #'
 #' @examples
 #' data(rfgv_dataset)
 #' data(group)
 #' data <- rfgv_dataset
-#' train<-data[which(data[,1]=="train"),-1]           # negative index into the `data` 
-#' test<-data[which(data[,1]=="test"),-1]             # object specifying all rows and all columns 
+#' train<-data[which(data[,1]=="train"),-1]           # negative index into the `data`
+#' test<-data[which(data[,1]=="test"),-1]             # object specifying all rows and all columns
 #' validation<-data[which(data[,1]=="validation"),-1] # except the first column.
-#' 
+#'
 #' forest<-rfgv(train,
 #'              group=group,
 #'              groupImp=group,
@@ -213,11 +241,11 @@ rfgv<-function(data,
                       mtry_group=mtry_group,
                       penalty=penalty,
                       mtry_var=mtry_var)
-      
-      predicted[unlist(samples$oobsamples[[b]]),b]<-as.numeric.factor(predict_cartgv.rf(data[unlist(samples$oobsamples[[b]]),], 
+
+      predicted[unlist(samples$oobsamples[[b]]),b]<-as.numeric.factor(predict_cartgv.rf(data[unlist(samples$oobsamples[[b]]),],
                                                                                         tree$tree,
                                                                                         tree$tree_split)$hat.Y)
-      
+
     err[b]<-length(which(predicted[unlist(samples$oobsamples[[b]]),b]!=data$Y[unlist(samples$oobsamples[[b]])]))/length(data$Y[unlist(samples$oobsamples[[b]])])
     if(grp.importance==TRUE){
       acc<-1-as.numeric(impurity.cartgv.rf(data[unlist(samples$oobsamples[[b]]),],
@@ -237,9 +265,9 @@ rfgv<-function(data,
         test_predicted[,b]<-as.numeric.factor(predict_cartgv.rf(test,
                                                                 tree$tree,
                                                                 tree$tree_split)$hat.Y)
-      
+
          err.test[b]<-length(which(test_predicted[,b]!=test$Y))/length(test$Y)
-      
+
     }
     if(keep_forest==TRUE){
       forest[[b]]<-tree
@@ -256,7 +284,7 @@ rfgv<-function(data,
   pred<-ifelse(vote[,1]>vote[,2],"0",ifelse(vote[,1]<=vote[,2],"1",NA))
   oob.times<-rowSums(ifelse(!is.na(predicted),1,0),na.rm=T)
   confusion<-xtab_function(pred[!is.na(pred)],data$Y[!is.na(pred)])
-  
+
   if(!is.null(test)){
     err.rate.test<-apply(cbind(cumsum(err.test),1:ntree),1,function(x)x[1]/x[2])
     vote.test[,2]<-rowMeans(test_predicted,na.rm=T)
@@ -281,7 +309,7 @@ rfgv<-function(data,
   }else{
     importance<-NULL
   }
-  
+
   return(list(forest=forest,
               predicted=predicted,
               importance=importance,

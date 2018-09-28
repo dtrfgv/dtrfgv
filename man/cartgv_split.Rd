@@ -9,36 +9,45 @@ cartgv_split(data, group, crit = 1, case_min = 1, maxdepth = 2,
   penalty = "No")
 }
 \arguments{
-\item{data}{a data frame containing the response value (for the first variable)and the predictors and used to grow the tree.
-The name of the response value must be "Y".The response variable must be the first variable of the data frame and the variable
+\item{data}{a data frame containing the response value (for the first variable)
+and the predictors and used to grow the tree.
+The name of the response value must be "Y".The response variable must be the
+first variable of the data frame and the variable
 must be coded as the two levels "0" and "1".}
 
 \item{group}{group a vector with the group number of each variable.
-(WARNING : if there are "\code{p}" goups, the groups must be numbers from "\code{1}" to "\code{p}" in increasing order. The
+(WARNING : if there are "\code{p}" goups, the groups must be numbers from
+"\code{1}" to "\code{p}" in increasing order. The
 group label of the response variable is missing (i.e. NA)).}
 
-\item{crit}{an integer indicating the impurity function used (1=Gini index / 2=Entropie/ 3=Misclassification rate).}
+\item{crit}{an integer indicating the impurity function used
+(1=Gini index / 2=Entropie/ 3=Misclassification rate).}
 
-\item{case_min}{an integer indicating the minimun number of cases/non cases in a terminal nodes. The default is 1.}
+\item{case_min}{an integer indicating the minimun number of cases/non cases in
+a terminal nodes. The default is 1.}
 
 \item{maxdepth}{the max depth for a split-tree.}
 
-\item{p}{an integer indicating the number of variables randomly samples as candidates at each split.}
+\item{p}{an integer indicating the number of variables randomly samples as
+candidates at each split.}
 
-\item{penalty}{a boolean indicating if the decrease in node impurity must take account of the group size. Four penalty are
+\item{penalty}{a boolean indicating if the decrease in node impurity must take
+account of the group size. Four penalty are
 available: "No","Size","Root.size" or "Log".}
-
-\item{IMPORTANCE}{a boolean indicating if the importance of each group need to be computed.}
 }
 \value{
 a list with elements
 \itemize{
-\item tree: a data frame which summarizes the resulted splitting tree.
-\item carts: a list containing all the CART objects used to buid the splitting tree. (Note that each split in the splitting tree is a CART object)
-\item splits : a list containing informations about the splits. Each element is an object retuned by the function "\code{split_cartgv}".
-\item pop : a list containing the indices (rownames) of the observations which belong to the nodes.
-\item tables_coupures: a list containing data frames that summarizes the splits.
-\item groups_selec: a matrix containint for each splitting-tree the indices of the sampled grouped. Precisely, the i-th row correspond to the i-th splitting-tree.
+\item tree : a data frame which summarizes the resulted splitting tree.
+\item carts : a list containing all the CART objects used to buid the splitting
+tree. (Note that each split in the splitting tree is a CART object)
+\item splits : a list containing informations about the splits. Each element
+is an object retuned by the function "\code{split_cartgv}".
+\item pop : a list containing the indices (rownames) of the observations which
+belong to the nodes.
+\item tables_coupures : a list containing data frames that summarizes the splits.
+\item groups_selec : a matrix containint for each splitting-tree the indices of
+the sampled grouped. Precisely, the i-th row correspond to the i-th splitting-tree.
 }
 }
 \description{

@@ -30,19 +30,20 @@ available: "No","Size","Root.size" or "Log".}
 \value{
 a list with elements
 \itemize{
-\item tree: a data frame which summarizes the resulted CARTGV tree.
-\item carts: a list containing all the CART objects used to buid the CARTGV tree.
+\item tree : a data frame which summarizes the resulted CARTGV tree.
+\item carts : a list containing all the CART objects used to buid the CARTGV tree.
 \item splits : a list containing informations about the splits. Each element is an object retuned by the function "\code{split_cartgv}".
 \item pop : a list containing the indices (rownames) of the observations which belong to the nodes.
-\item tables_coupures: a list containing data frames that summarizes the splits.
-\item importance_rand: a list providing the importance of each group at each node. Calculation of the importance is based on the Group Rand Importance.
-\item importance_sur:  a list providing the importance of each group at each node. Calculation of the importance is based on the Group Surrogate Importance.
-\item agreement: a list containing the measure of agreement between the selected split and the other possible split at each node and fr each group.
+\item tables_coupures : a list containing data frames that summarizes the splits.
+\item importance_rand : a list providing the importance of each group at each node. Calculation of the importance is based on the Group Rand Importance.
+\item importance_sur :  a list providing the importance of each group at each node. Calculation of the importance is based on the Group Surrogate Importance.
+\item agreement : a list containing the measure of agreement between the selected split and the other possible split at each node and fr each group.
 This proximity measure is based on the Rand Index.
 }
 }
 \description{
 Classification And Regression Trees for Grouped Variables.
-
+}
+\details{
 Implemented for binary classification problems
 }
