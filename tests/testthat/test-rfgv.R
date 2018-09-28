@@ -1,6 +1,6 @@
 context("rfgv")
 
-test_that("rfgv works on data functions test", {
+test_that("rfgv with a random forest of 4 trees ", {
   data(rfgv_dataset)
   data(group)
   data  <- rfgv_dataset 
@@ -14,9 +14,7 @@ test_that("rfgv works on data functions test", {
                ntree=4,
                mtry_group=3,
                sampvar=TRUE,
-               sampvar_type=2,
                maxdepth=2,
-               kfold=3,
                replace=TRUE,
                case_min=1,
                sampsize=nrow(train),
@@ -26,6 +24,7 @@ test_that("rfgv works on data functions test", {
                keep_forest=FALSE,
                crit=1,
                penalty="No")
+  
   
   expect_equal(which.max(forest$importance[[1]]), 2)
 })
