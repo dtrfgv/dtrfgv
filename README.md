@@ -3,10 +3,8 @@
 
 # Tree Penalized Linear Discriminant Analysis
 
-[![Build
-Status](https://travis-ci.org/pnavaro/tplda.svg?branch=master)](https://travis-ci.org/pnavaro/tplda)
-[![Coverage
-status](https://codecov.io/gh/pnavaro/tplda/branch/master/graph/badge.svg)](https://codecov.io/github/pnavaro/tplda?branch=master)
+[![Build Status](https://travis-ci.org/dtrfgv/dtrfgv.svg?branch=master)](https://travis-ci.org/dtrfgv/dtrfgv)
+[![codecov](https://codecov.io/gh/dtrfgv/dtrfgv/branch/master/graph/badge.svg)](https://codecov.io/gh/dtrfgv/dtrfgv)
 
 Attempt to create an R package from prototype available at
 [“Classification tree algorithm for grouped
