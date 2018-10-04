@@ -100,7 +100,7 @@ cartgv<-function(data,
         if(IMPORTANCE==TRUE){
           importance[[i]]<-unlist(splits[[i]][[crit]])
           agreement[[i]]<-sapply(1:length(igroups),
-                                 function(x) classAgreement(table(unlist(splits[[i]]$carts[[x]]$where),
+                                 function(x) e1071::classAgreement(table(unlist(splits[[i]]$carts[[x]]$where),
                                                                   unlist(splits[[i]]$carts[[ind_var]]$where)),
                                                             match.names=FALSE)$rand)
 

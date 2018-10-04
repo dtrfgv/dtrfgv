@@ -345,10 +345,10 @@ extract_subtrees<-function(tree,cp){
   tree_courant<-tree
   pruned_nodes_tot<-NULL
   for (i in 1:n) {
-    if(str_detect(cp$t_prunek[i],",")!=TRUE || is.na(cp$t_prunek[i])){## si plusieurs sous-arbres sont retires a cette étape
+    if(stringr::str_detect(cp$t_prunek[i],",")!=TRUE || is.na(cp$t_prunek[i])){## si plusieurs sous-arbres sont retires a cette étape
       node<-cp$t_prunek[i]
     }else{
-      node<-unlist(str_split(cp$t_prunek[i],","))
+      node<-unlist(stringr::str_split(cp$t_prunek[i],","))
     }
     prune_nodes<-NULL
     for(j in 1:length(node)){
