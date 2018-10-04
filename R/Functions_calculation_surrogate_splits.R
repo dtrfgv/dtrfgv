@@ -2,15 +2,15 @@
 
 #' surrogate_split
 #'
-#' @param Ystar
-#' @param node
-#' @param group
-#' @param igroup
-#' @param penalty
-#' @param label
-#' @param maxdepth
+#' @param Ystar Ystar
+#' @param node  node
+#' @param group group
+#' @param igroup igroup
+#' @param penalty penalty
+#' @param label label
+#' @param maxdepth maxdepth
 #'
-#' @return
+#' @return a list
 #' @export
 #'
 surrogate_split<-function(Ystar,node,group,igroup,penalty='No',label,maxdepth){

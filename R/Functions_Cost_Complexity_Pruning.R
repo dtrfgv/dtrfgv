@@ -2,7 +2,7 @@
 ########################         COST COMPLEXITY PRUNING      ########################
 ############################################################################################
 
-#### Followed the algorithm introduced by Breiman(page 293)
+#### Followed the algorithm introduced by Breiman (page 293)
 
 
 #' descendant
