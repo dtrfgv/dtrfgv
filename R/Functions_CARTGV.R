@@ -177,7 +177,7 @@ cartgv<-function(data,
               pop=pop,
               tables_coupures=tables_coupures,
               importance_rand=importance_rand,
-              importance_sur=cimportance_sur,
+              importance_sur=importance_sur,
               agreement=agreement))
 }
 
