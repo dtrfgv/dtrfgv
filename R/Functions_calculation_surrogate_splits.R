@@ -2,18 +2,17 @@
 
 #' surrogate_split
 #'
-#' @param Ystar 
-#' @param node 
-#' @param group 
-#' @param igroup 
-#' @param penalty 
-#' @param label 
-#' @param maxdepth 
+#' @param Ystar
+#' @param node
+#' @param group
+#' @param igroup
+#' @param penalty
+#' @param label
+#' @param maxdepth
 #'
 #' @return
 #' @export
 #'
-#' @examples
 surrogate_split<-function(Ystar,node,group,igroup,penalty='No',label,maxdepth){
   ivar<-which(group==igroup)
   group.size<-length(ivar)
@@ -40,7 +39,7 @@ surrogate_split<-function(Ystar,node,group,igroup,penalty='No',label,maxdepth){
     node1<-node[which(unlist(cart$where)==modalities[k]),]
     tab1<-table(Ypred[which(unlist(cart$where)==modalities[k])],node$Y[which(unlist(cart$where)==modalities[k])])
     prop_n1<-dim(node1)[1]/length(node$Y)
-    Gain_Gini<-Gain_Gini- length(node$Y)*(prop_n1*gini(prop.table(tab1[1,]))) 
+    Gain_Gini<-Gain_Gini- length(node$Y)*(prop_n1*gini(prop.table(tab1[1,])))
     Gain_Ent<-Gain_Ent - length(node$Y)*(prop_n1*entropy(prop.table(tab1[1,])))
   }
   if(penalty=="Size"){
@@ -60,6 +59,6 @@ surrogate_split<-function(Ystar,node,group,igroup,penalty='No',label,maxdepth){
       Gain_Clas<-Gain_Clas/log(group.size)
     }
   }
-   return(list(Gain_Gini=Gain_Gini,Gain_Ent=Gain_Ent,Gain_Clas=Gain_Clas,Ypred=Ypred,Ystarpred=Ystarpred)) 
+   return(list(Gain_Gini=Gain_Gini,Gain_Ent=Gain_Ent,Gain_Clas=Gain_Clas,Ypred=Ypred))
   }
 
