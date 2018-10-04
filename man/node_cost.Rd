@@ -7,9 +7,12 @@
 node_cost(node, tree)
 }
 \arguments{
-\item{node}{}
+\item{node}{the number of the node in the tree \code{tree}}
 
-\item{tree}{}
+\item{tree}{a tree. A data frame returned by the function \code{CARTGV} and which summarizes the resulted CARTGV tree.}
+}
+\value{
+a numeric indicating the change in tree cost (difference between the node error and the local node error). It corresponds to the value of the complexity parameter \code{alpha}.
 }
 \description{
 function that gives the change in tree cost (difference between the node error and the local node error)  ==> gives alpha (function g(t) in the Breiman's book)

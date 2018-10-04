@@ -7,12 +7,15 @@
 cost_error(node, tree, alpha)
 }
 \arguments{
-\item{node}{}
+\item{node}{the number of the node in the tree \code{tree}}
 
-\item{tree}{}
+\item{tree}{a tree. A data frame returned by the function \code{CARTGV} and which summarizes the resulted CARTGV tree.}
 
-\item{alpha}{}
+\item{alpha}{a positive real. It is the value of the complexity paramter in the cost-complexity criterion.}
+}
+\value{
+a numeric indicating the misclassification error of the subtree stremming from node penalized by alpha.
 }
 \description{
-function that calculate the misclassification error of the subtree stremming from node penalized by alpha
+function that calculate the misclassification error of the subtree stremming from \code{node} penalized by alpha
 }

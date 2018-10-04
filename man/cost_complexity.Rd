@@ -7,7 +7,14 @@
 cost_complexity(tree)
 }
 \arguments{
-\item{tree}{}
+\item{tree}{a tree. A data frame returned by the function \code{CARTGV} and which summarizes the resulted CARTGV tree.}
+}
+\value{
+a list containing the elements:
+cp: a data frame that summarizes the complexity as explained in the example in Breiman (chap 10, 1984). (k=number of iterations,
+(t_prunek=the k-th pruned node. All the subtree stremming from this node is deleted, N_Ttk= the number of leaves in the k-th
+pruned tree, R_Ttk=error for the pruned tree at the k-th step).
+summary: data frame indicating information about nodes in the maximal tree.
 }
 \description{
 cost_complexity

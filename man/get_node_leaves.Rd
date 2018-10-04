@@ -7,9 +7,12 @@
 get_node_leaves(node, tree)
 }
 \arguments{
-\item{node}{}
+\item{node}{the number of the node in the tree \code{tree}}
 
-\item{tree}{}
+\item{tree}{a tree. A data frame returned by the function \code{CARTGV} and which summarizes the resulted CARTGV tree.}
+}
+\value{
+a vector indicating the leaves of the subtree stremming from \code{node}.
 }
 \description{
 function that gives the leaves of the subtree stremming from node

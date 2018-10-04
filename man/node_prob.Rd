@@ -7,9 +7,12 @@
 node_prob(node, tree)
 }
 \arguments{
-\item{node}{}
+\item{node}{the number of the node in the tree \code{tree}.}
 
-\item{tree}{}
+\item{tree}{a tree. A data frame returned by the function \code{CARTGV} and which summarizes the resulted CARTGV tree.}
+}
+\value{
+a numeric indicating the probability that an observation falls into a node.
 }
 \description{
 function that calculate the probability of being at the node

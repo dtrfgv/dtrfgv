@@ -7,13 +7,13 @@
 best_node_cost(node, tree)
 }
 \arguments{
-\item{node}{}
+\item{node}{the number of the node in the tree \code{tree}}
 
-\item{tree}{}
+\item{tree}{a tree. A data frame returned by the function \code{CARTGV} and which summarizes the resulted CARTGV tree.}
+}
+\value{
+a numeric that gives the minimum change in the subtree stremming from \code{node}
 }
 \description{
 function that gives the minimum change in tree cost ==> gives alpha = min g(t), for all t in T
-}
-\details{
-WARNINGS: this function was modified on the 4th december 2017 to be adapted to non-binary trees.
 }

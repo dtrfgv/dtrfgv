@@ -7,9 +7,12 @@
 node_error(node, tree)
 }
 \arguments{
-\item{node}{}
+\item{node}{the number of the node in the tree \code{tree}.}
 
-\item{tree}{}
+\item{tree}{a tree. A data frame returned by the function \code{CARTGV} and which summarizes the resulted CARTGV tree.}
+}
+\value{
+a numeric indicating the misclassification error of the subtree stremming from node.
 }
 \description{
 Function that calculate the misclassification error of the subtree stremming from node

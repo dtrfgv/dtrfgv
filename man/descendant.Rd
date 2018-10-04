@@ -7,9 +7,12 @@
 descendant(node, tree)
 }
 \arguments{
-\item{node}{}
+\item{node}{the number of the node in the tree \code{tree}.}
 
-\item{tree}{}
+\item{tree}{a tree. A data frame returned by the function \code{CARTGV} and which summarizes the resulted CARTGV tree.}
+}
+\value{
+descendants: a vector with the number of the descendants of \code{node} in \code{tree}.
 }
 \description{
 function that find the direct descendants of a node

@@ -8,19 +8,22 @@ surrogate_split(Ystar, node, group, igroup, penalty = "No", label,
   maxdepth)
 }
 \arguments{
-\item{Ystar}{}
+\item{Ystar}{Ystar}
 
-\item{node}{}
+\item{node}{node}
 
-\item{group}{}
+\item{group}{group}
 
-\item{igroup}{}
+\item{igroup}{igroup}
 
-\item{penalty}{}
+\item{penalty}{penalty}
 
-\item{label}{}
+\item{label}{label}
 
-\item{maxdepth}{}
+\item{maxdepth}{maxdepth}
+}
+\value{
+a list
 }
 \description{
 surrogate_split

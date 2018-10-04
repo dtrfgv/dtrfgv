@@ -7,9 +7,12 @@
 extract_subtrees(tree, cp)
 }
 \arguments{
-\item{tree}{}
+\item{tree}{a tree. A data frame returned by the function \code{CARTGV} and which summarizes the resulted CARTGV tree.}
 
-\item{cp}{}
+\item{cp}{a data frame that summarizes the complexity as explained in the example in Breiman (chap 10, 1984). It is the object \code{cp} returned by the function \code{cost_complexity}.}
+}
+\value{
+a list containing the sequence of optimal subtrees.
 }
 \description{
 function that extract the sequence of nested trees

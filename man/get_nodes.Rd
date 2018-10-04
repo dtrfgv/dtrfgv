@@ -7,13 +7,13 @@
 get_nodes(node, tree)
 }
 \arguments{
-\item{node}{}
+\item{node}{the number of the node in the tree \code{tree}.}
 
-\item{tree}{}
+\item{tree}{a tree. A data frame returned by the function \code{CARTGV} and which summarizes the resulted CARTGV tree.}
+}
+\value{
+a vector indicating the nodes of the subtree stremming from \code{node}.
 }
 \description{
 function that gives the nodes of the subtree stremming from node
-}
-\details{
-WARNINGS: this function was modified on the 4th december 2017 to be adapted to non-binary trees.
 }

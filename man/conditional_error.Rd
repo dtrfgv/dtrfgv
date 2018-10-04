@@ -7,9 +7,12 @@
 conditional_error(node, tree)
 }
 \arguments{
-\item{node}{}
+\item{node}{the number of the node in the tree \code{tree}.}
 
-\item{tree}{}
+\item{tree}{a tree. A data frame returned by the function \code{CARTGV} and which summarizes the resulted CARTGV tree.}
+}
+\value{
+cond_err: an numeric indicating the missclassification error assuming that we are in the node.
 }
 \description{
 function that calculate the missclassification error assuming that we are in the node
