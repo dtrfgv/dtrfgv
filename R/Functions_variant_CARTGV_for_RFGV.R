@@ -78,7 +78,7 @@ cartgv.rf<-function(data,
         node_impurity<-entropy(prop.table(table(node$Y)))
       }else{
         if(crit=="3"){
-          node_impurity<-(length(which(yval[i]!=node$Y)))- length(which(pred[,j]!=node$Y))
+          node_impurity<-length(which(yval[i]!=node$Y))
         }
       }
     }
