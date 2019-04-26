@@ -17,6 +17,11 @@ Imports:
   caret, ROCR, gtools, rpart, stats, e1071, stringr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0
-Suggests: testthat,
-    covr
+Suggests: 
+    testthat,
+    covr,
+    knitr,
+    rmarkdown,
+    pkgdown
 Encoding: UTF-8
+VignetteBuilder: knitr
