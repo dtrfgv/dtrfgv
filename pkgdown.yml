@@ -1,0 +1,9 @@
+pandoc: '2.2'
+pkgdown: 1.3.0
+pkgdown_sha: ~
+articles:
+  dtrfgv: dtrfgv.html
+urls:
+  reference: https://dtrfgv.github.io/dtrfgv/reference
+  article: https://dtrfgv.github.io/dtrfgv/articles
+
