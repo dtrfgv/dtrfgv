@@ -14,8 +14,11 @@ knitr::opts_chunk$set(
 ```
 # Decision Trees and Random Forests for Grouped Variables
 
+<!-- badges: start -->
+[![CRAN status](https://www.r-pkg.org/badges/version/dtrfgv)](https://cran.r-project.org/package=dtrfgv)
 [![Build Status](https://travis-ci.org/dtrfgv/dtrfgv.svg?branch=master)](https://travis-ci.org/dtrfgv/dtrfgv)
 [![Coverage status](https://codecov.io/gh/dtrfgv/dtrfgv/branch/master/graph/badge.svg)](https://codecov.io/github/dtrfgv/dtrfgv?branch=master)
+<!-- badges: end -->
 
 Attempt to create an R package from prototype available at ["Classification tree algorithm for grouped variables"](https://github.com/apoterie/TPLDA).
 
