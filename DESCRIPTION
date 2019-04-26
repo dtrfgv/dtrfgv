@@ -9,10 +9,11 @@ Type: Package
 Title: Decision Trees and Random Forests for Grouped Variables
 Version: 0.00
 Date: 2018-07-01
-Author: Audrey Poterie <apoterie@insa-rennes.fr>
+Authors@R: c(person("Audrey", "Poterie", email = "apoterie@insa-rennes.fr",
+                  role = c("aut", "cre")),
+             person("Pierre", "Navaro", email = "navaro@math.cnrs.fr", role = "ctb"))
 Depends: R (>= 3.0.0)
 License: GPL (>= 2)
-Maintainer: Pierre Navaro <navaro@math.cnrs.fr>
 Imports:
   caret, ROCR, gtools, rpart, stats, e1071, stringr
 Roxygen: list(markdown = TRUE)
