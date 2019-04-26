@@ -42,3 +42,4 @@ vignettes/*.pdf
 rsconnect/
 
 docs/*
+inst/doc
