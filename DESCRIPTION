@@ -25,3 +25,5 @@ Suggests:
     pkgdown
 Encoding: UTF-8
 VignetteBuilder: knitr
+URL: https://github.com/dtrfgv/dtrfgv
+BugReports: https://github.com/dtrfgv/dtrfgv/issues
